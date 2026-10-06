@@ -6,6 +6,8 @@ import { Roles } from "@/components/marketing/Roles";
 import { Developers } from "@/components/marketing/Developers";
 import { CurrentBuild } from "@/components/marketing/CurrentBuild";
 import { About } from "@/components/marketing/About";
+import { ClosingCTA } from "@/components/marketing/ClosingCTA";
+import { Footer } from "@/components/marketing/Footer";
 
 export default function HomePage() {
   return (
@@ -18,6 +20,8 @@ export default function HomePage() {
       <Developers />
       <CurrentBuild />
       <About />
+      <ClosingCTA />
+      <Footer />
     </>
   );
 }
