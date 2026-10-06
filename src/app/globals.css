@@ -308,3 +308,248 @@ select:focus {
 *::-webkit-scrollbar-thumb:hover {
   background: #355242;
 }
+
+/* AXIONVERA HERO START */
+
+.ax-hero-grid {
+  opacity: 0.65;
+  background-size: 48px 48px;
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(27, 42, 34, 0.17) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(27, 42, 34, 0.17) 1px,
+      transparent 1px
+    );
+}
+
+@keyframes ax-agent-cycle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(-16px) scale(0.97);
+  }
+
+  8%,
+  78% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  86%,
+  96% {
+    opacity: 0.2;
+    transform: translateX(6px) scale(0.98);
+  }
+}
+
+@keyframes ax-connector-left-cycle {
+  0%,
+  15% {
+    stroke-dashoffset: 130;
+    opacity: 0.12;
+  }
+
+  22%,
+  76% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+
+  88%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes ax-connector-right-cycle {
+  0%,
+  42% {
+    stroke-dashoffset: 130;
+    opacity: 0.12;
+  }
+
+  50%,
+  84% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+
+  92%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes ax-verifying-cycle {
+  0%,
+  18% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  44% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  48%,
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes ax-verified-cycle {
+  0%,
+  47% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  51%,
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  94%,
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes ax-reward-cycle {
+  0%,
+  48% {
+    opacity: 0.62;
+    border-color: #1b2a22;
+    box-shadow: 0 0 0 rgba(2, 199, 99, 0);
+  }
+
+  53%,
+  86% {
+    opacity: 1;
+    border-color: #02c763;
+    box-shadow: 0 0 34px -8px rgba(2, 199, 99, 0.26);
+  }
+
+  93%,
+  100% {
+    opacity: 0.62;
+    border-color: #1b2a22;
+    box-shadow: 0 0 0 rgba(2, 199, 99, 0);
+  }
+}
+
+@keyframes ax-old-balance-cycle {
+  0%,
+  53% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  57%,
+  87% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  92%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ax-new-balance-cycle {
+  0%,
+  54% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  58%,
+  87% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  92%,
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.ax-agent-card {
+  animation: ax-agent-cycle 6.5s
+    cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.ax-connector-left,
+.ax-connector-right {
+  stroke-dasharray: 130;
+}
+
+.ax-connector-left {
+  animation: ax-connector-left-cycle 6.5s ease-in-out infinite;
+}
+
+.ax-connector-right {
+  animation: ax-connector-right-cycle 6.5s ease-in-out infinite;
+}
+
+.ax-verifying-state {
+  animation: ax-verifying-cycle 6.5s ease-in-out infinite;
+}
+
+.ax-verified-state {
+  animation: ax-verified-cycle 6.5s ease-in-out infinite;
+}
+
+.ax-reward-card {
+  animation: ax-reward-cycle 6.5s
+    cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.ax-old-balance {
+  animation: ax-old-balance-cycle 6.5s ease-in-out infinite;
+}
+
+.ax-new-balance {
+  animation: ax-new-balance-cycle 6.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-agent-card,
+  .ax-connector-left,
+  .ax-connector-right,
+  .ax-verifying-state,
+  .ax-verified-state,
+  .ax-reward-card,
+  .ax-old-balance,
+  .ax-new-balance {
+    animation: none !important;
+  }
+
+  .ax-agent-card,
+  .ax-reward-card,
+  .ax-verified-state,
+  .ax-new-balance {
+    opacity: 1;
+    transform: none;
+  }
+
+  .ax-verifying-state,
+  .ax-old-balance {
+    opacity: 0;
+  }
+}
+
+/* AXIONVERA HERO END */
