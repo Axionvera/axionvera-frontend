@@ -24,7 +24,7 @@
      SURFACES
      ========================================================= */
 
-  --background: #050806;
+  --background: #101412;
   --background-secondary: #080d0a;
 
   --surface-primary: #0c120f;
@@ -146,6 +146,8 @@
 }
 
 html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
   min-height: 100%;
   background: var(--background);
   color-scheme: dark;
