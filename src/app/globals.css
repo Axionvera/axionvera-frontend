@@ -1,0 +1,310 @@
+@import "tailwindcss";
+
+:root {
+  /* =========================================================
+     AXIONVERA — BRAND
+     ========================================================= */
+
+  --ax-green: #02c763;
+  --ax-green-bright: #02d86f;
+
+  --ax-green-50: #e8fff2;
+  --ax-green-100: #c6fddd;
+  --ax-green-200: #8cf7ba;
+  --ax-green-300: #52ec94;
+  --ax-green-400: #20dd74;
+  --ax-green-500: #02c763;
+  --ax-green-600: #00a952;
+  --ax-green-700: #008642;
+  --ax-green-800: #066936;
+  --ax-green-900: #07562e;
+  --ax-green-950: #02321a;
+
+  /* =========================================================
+     SURFACES
+     ========================================================= */
+
+  --background: #050806;
+  --background-secondary: #080d0a;
+
+  --surface-primary: #0c120f;
+  --surface-elevated: #101813;
+  --surface-interactive: #142019;
+
+  /* =========================================================
+     BORDERS
+     ========================================================= */
+
+  --border-subtle: #1b2a22;
+  --border-strong: #294034;
+
+  /* =========================================================
+     TEXT
+     ========================================================= */
+
+  --text-primary: #f3f7f4;
+  --text-secondary: #a7b3ab;
+  --text-tertiary: #758078;
+  --text-disabled: #515b54;
+  --text-on-green: #031009;
+
+  /* =========================================================
+     SEMANTIC
+     ========================================================= */
+
+  --success: #02c763;
+  --warning: #f5b942;
+  --error: #f25f5c;
+  --info: #5b8cff;
+
+  /* =========================================================
+     RADII
+     ========================================================= */
+
+  --radius-sm: 8px;
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-feature: 20px;
+  --radius-panel: 24px;
+  --radius-pill: 999px;
+
+  /* =========================================================
+     SPACING
+     ========================================================= */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+  --space-10: 96px;
+  --space-11: 128px;
+
+  /* =========================================================
+     APPLICATION LAYOUT
+     ========================================================= */
+
+  --sidebar-width: 248px;
+  --topbar-height: 64px;
+  --content-max-width: 1440px;
+
+  /* =========================================================
+     MOTION
+     ========================================================= */
+
+  --duration-fast: 180ms;
+  --duration-panel: 280ms;
+  --duration-hero: 600ms;
+
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   TAILWIND THEME TOKENS
+   ========================================================= */
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
+
+  --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-interactive: var(--surface-interactive);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
+  --color-primary: var(--ax-green);
+  --color-primary-hover: var(--ax-green-bright);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+}
+
+/* =========================================================
+   BASE RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--text-primary);
+
+  font-family: var(--font-inter), Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.625;
+  letter-spacing: -0.01em;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-space-grotesk), Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+h1 {
+  font-size: 60px;
+  line-height: 64px;
+}
+
+h2 {
+  font-size: 44px;
+  line-height: 50px;
+}
+
+h3 {
+  font-size: 30px;
+  line-height: 38px;
+}
+
+h4 {
+  font-size: 22px;
+  line-height: 30px;
+}
+
+p {
+  margin: 0;
+}
+
+small {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+/* =========================================================
+   FORM CONTROLS
+   ========================================================= */
+
+input,
+textarea,
+select {
+  color: var(--text-primary);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  outline: none;
+
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--ax-green);
+  box-shadow: 0 0 0 3px rgba(2, 199, 99, 0.08);
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--ax-green);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--ax-green);
+  color: var(--text-on-green);
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) var(--background);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 2px solid var(--background);
+  border-radius: var(--radius-pill);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #355242;
+}
