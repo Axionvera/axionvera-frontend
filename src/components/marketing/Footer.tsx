@@ -117,6 +117,29 @@ export function Footer() {
                 ))}
 
                 <a
+                  href="https://github.com/Axionvera"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-text-secondary transition-colors duration-200 hover:text-text-primary"
+                >
+                  GitHub
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="h-3.5 w-3.5"
+                    stroke="currentColor"
+                  >
+                    <path
+                      d="M7 17 17 7M10 7h7v7"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </a>
+
+                <a
                   href="https://x.com/axionvera"
                   target="_blank"
                   rel="noopener noreferrer"
