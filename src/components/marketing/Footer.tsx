@@ -100,10 +100,46 @@ export function Footer() {
               links={productLinks}
             />
 
-            <FooterColumn
-              title="Resources"
-              links={resourceLinks}
-            />
+            <div className="flex flex-col gap-3">
+              <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-primary">
+                Resources
+              </span>
+
+              <div className="flex flex-col gap-2">
+                {resourceLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm text-text-secondary transition-colors duration-200 hover:text-text-primary"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+
+                <a
+                  href="https://x.com/axionvera"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-text-secondary transition-colors duration-200 hover:text-text-primary"
+                >
+                  X
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="h-3.5 w-3.5"
+                    stroke="currentColor"
+                  >
+                    <path
+                      d="M7 17 17 7M10 7h7v7"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </div>
 
             <FooterColumn
               title="Company"

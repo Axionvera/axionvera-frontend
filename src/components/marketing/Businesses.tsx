@@ -110,7 +110,7 @@ export function Businesses() {
         {/* Section header */}
         <div className="max-w-3xl">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border-subtle bg-[#131a16] px-3 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="ax-section-dot h-1.5 w-1.5 rounded-full bg-primary" />
 
             <span className="text-xs font-semibold uppercase tracking-[0.12em] text-text-secondary">
               Use Cases

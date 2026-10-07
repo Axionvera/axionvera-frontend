@@ -145,7 +145,7 @@ export function CurrentBuild() {
             ====================================================== */}
         <div className="flex max-w-3xl flex-col items-start gap-5">
           <div className="inline-flex items-center gap-2.5 rounded-full border border-border-subtle bg-[#272b28] px-3 py-1.5">
-            <span className="relative flex h-2 w-2">
+            <span className="ax-section-dot-wrap relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
             </span>

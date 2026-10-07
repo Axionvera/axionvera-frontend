@@ -92,7 +92,7 @@ export function About() {
         <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="flex flex-col items-start gap-8 lg:col-span-8">
             <div className="inline-flex items-center gap-2.5 rounded-full bg-[#272b28]/60 px-3 py-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              <span className="ax-section-dot h-1.5 w-1.5 rounded-full bg-primary" />
 
               <span className="text-xs font-semibold uppercase tracking-[0.12em] text-text-secondary">
                 About Axionvera

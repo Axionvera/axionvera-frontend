@@ -100,7 +100,7 @@ export function Roles() {
         {/* Section heading */}
         <div className="mb-16 flex max-w-3xl flex-col items-center text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border-subtle bg-[#1d211e] px-3 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="ax-section-dot h-1.5 w-1.5 rounded-full bg-primary" />
 
             <span className="text-xs font-semibold uppercase tracking-[0.12em] text-text-secondary">
               How Roles Work
