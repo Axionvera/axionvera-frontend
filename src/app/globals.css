@@ -571,3 +571,102 @@ select:focus {
       transparent 1px
     );
 }
+
+/* AXIONVERA TEXT MOTION START */
+
+/*
+  ONE-TIME TEXT REVEALS
+
+  Initial:
+      hidden + slightly displaced
+
+  First viewport entry:
+      reveal
+
+  Afterwards:
+      permanently visible
+*/
+
+.ax-text-motion {
+  --ax-text-delay: 0ms;
+
+  opacity: 0;
+
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  transition-delay: var(--ax-text-delay);
+
+  will-change:
+    opacity,
+    transform,
+    filter;
+}
+
+
+/* -----------------------------------------
+   HEADINGS
+   ----------------------------------------- */
+
+.ax-text-heading {
+  transform: translateY(24px);
+  filter: blur(3px);
+}
+
+.ax-text-heading.ax-text-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+
+/* -----------------------------------------
+   BODY TEXT
+   ----------------------------------------- */
+
+.ax-text-body {
+  transform: translateY(14px);
+}
+
+.ax-text-body.ax-text-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: none;
+}
+
+
+/* -----------------------------------------
+   EYEBROWS / LABELS
+   ----------------------------------------- */
+
+.ax-text-label {
+  transform: translateY(8px);
+}
+
+.ax-text-label.ax-text-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: none;
+}
+
+
+/* -----------------------------------------
+   ACCESSIBILITY
+   ----------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-text-motion,
+  .ax-text-heading,
+  .ax-text-body,
+  .ax-text-label,
+  .ax-text-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
+/* AXIONVERA TEXT MOTION END */

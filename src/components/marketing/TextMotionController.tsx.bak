@@ -1,0 +1,169 @@
+"use client";
+
+import { useEffect } from "react";
+
+export function TextMotionController() {
+  useEffect(() => {
+    /*
+      Animate marketing text ONCE when it first
+      enters the viewport.
+
+      After revealing, the element is unobserved
+      and will never animate again.
+    */
+
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("section")
+    );
+
+    const animatedElements: HTMLElement[] = [];
+
+    sections.forEach((section) => {
+      const candidates = Array.from(
+        section.querySelectorAll<HTMLElement>(
+          "h1, h2, h3, h4, p, span"
+        )
+      );
+
+      const eligible = candidates.filter((element) => {
+        /*
+          Do not animate text inside interactive elements.
+        */
+        if (
+          element.closest("button") ||
+          element.closest("a") ||
+          element.closest("header") ||
+          element.closest("footer")
+        ) {
+          return false;
+        }
+
+        const tag = element.tagName.toLowerCase();
+
+        /*
+          Main headings and paragraphs.
+        */
+        if (
+          tag === "h1" ||
+          tag === "h2" ||
+          tag === "h3" ||
+          tag === "h4" ||
+          tag === "p"
+        ) {
+          return true;
+        }
+
+        /*
+          Only animate spans that behave as
+          section eyebrows / labels.
+        */
+        if (tag === "span") {
+          const classes = element.className;
+
+          return (
+            typeof classes === "string" &&
+            (
+              classes.includes("uppercase") ||
+              classes.includes("tracking-[")
+            )
+          );
+        }
+
+        return false;
+      });
+
+      eligible.forEach((element, index) => {
+        /*
+          Avoid registering the same text twice.
+        */
+        if (element.dataset.axMotionReady === "true") {
+          return;
+        }
+
+        element.dataset.axMotionReady = "true";
+
+        element.classList.add("ax-text-motion");
+
+        const tag = element.tagName.toLowerCase();
+
+        if (
+          tag === "h1" ||
+          tag === "h2" ||
+          tag === "h3" ||
+          tag === "h4"
+        ) {
+          element.classList.add("ax-text-heading");
+        } else if (tag === "p") {
+          element.classList.add("ax-text-body");
+        } else {
+          element.classList.add("ax-text-label");
+        }
+
+        /*
+          Small stagger between nearby text.
+          Keep it restrained.
+        */
+        const delay = Math.min(index * 45, 225);
+
+        element.style.setProperty(
+          "--ax-text-delay",
+          `${delay}ms`
+        );
+
+        animatedElements.push(element);
+      });
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const element = entry.target as HTMLElement;
+
+          /*
+            Reveal once.
+          */
+          element.classList.add("ax-text-visible");
+
+          /*
+            Once revealed, stop watching it permanently.
+            Scrolling back up will NOT replay the animation.
+          */
+          observer.unobserve(element);
+
+          element.dataset.axMotionShown = "true";
+        });
+      },
+      {
+        threshold: 0.12,
+
+        /*
+          Trigger shortly after the text enters
+          the lower portion of the viewport.
+        */
+        rootMargin: "0px 0px -8% 0px",
+      }
+    );
+
+    /*
+      Wait one frame so the browser paints the
+      initial hidden state before observation starts.
+      This makes the transition reliable.
+    */
+    const frame = requestAnimationFrame(() => {
+      animatedElements.forEach((element) => {
+        observer.observe(element);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, []);
+
+  return null;
+}

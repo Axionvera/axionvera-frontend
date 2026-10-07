@@ -8,11 +8,13 @@ import { CurrentBuild } from "@/components/marketing/CurrentBuild";
 import { About } from "@/components/marketing/About";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Footer } from "@/components/marketing/Footer";
+import { TextMotionController } from "@/components/marketing/TextMotionController";
 
 export default function HomePage() {
   return (
     <>
       <Navbar />
+      <TextMotionController />
       <Hero />
       <HowItWorks />
       <Businesses />
