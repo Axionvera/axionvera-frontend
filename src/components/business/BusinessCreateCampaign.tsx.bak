@@ -722,7 +722,7 @@ function ReviewRow({
   value: string;
   accent?: boolean;
 }) {
-  return (
+  return created ? <BusinessCampaignCreated /> : (
     <div className="flex flex-col justify-between gap-2 p-4 sm:flex-row sm:items-center">
       <span className="text-[10px] font-semibold uppercase tracking-wider text-[#758078]">
         {label}
