@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import {
@@ -13,18 +12,6 @@ import {
   BusinessOverviewConnected,
 } from "@/components/business/BusinessOverviewConnected";
 
-import {
-  BusinessCampaignsConnected,
-} from "@/components/business/BusinessCampaignsConnected";
-
-import {
-  BusinessCampaignDetailConnected,
-} from "@/components/business/BusinessCampaignDetailConnected";
-
-
-import {
-  BusinessCreateCampaign,
-} from "@/components/business/BusinessCreateCampaign";
 
 function OverviewIcon() {
   return (
@@ -441,40 +428,6 @@ function DashboardShell() {
   const [accountOpen, setAccountOpen] =
     useState(false);
 
-  const pathname = usePathname();
-
-  const isCreateCampaignRoute =
-    pathname ===
-    "/app/business/campaigns/new";
-
-  const isMerchantGrowthCampaignRoute =
-    pathname ===
-    "/app/business/campaigns/merchant-growth-campaign";
-
-  const isCampaignListRoute =
-    pathname ===
-    "/app/business/campaigns";
-
-  const isCampaignDetailPage =
-    pathname ===
-    "/app/business/campaigns/merchant-growth-campaign";
-
-  const isCampaignsPage =
-    pathname.startsWith(
-      "/app/business/campaigns"
-    );
-
-  const pageTitle =
-    isConnected && isCreateCampaignRoute
-      ? "Create Campaign"
-      : isConnected &&
-          isMerchantGrowthCampaignRoute
-        ? "Campaign"
-        : isConnected &&
-            isCampaignListRoute
-          ? "Campaigns"
-          : "Overview";
-
   const shortAddress =
     address
       ? shortenAddress(address)
@@ -512,11 +465,7 @@ function DashboardShell() {
             {navigation.map(
               (item, index) => {
                 const active =
-                  !isConnected
-                    ? index === 0
-                    : item.href === "/app/business"
-                      ? pathname === item.href
-                      : pathname.startsWith(item.href);
+                  index === 0;
 
                 if (
                   !isConnected &&
@@ -668,7 +617,7 @@ function DashboardShell() {
                 lineHeight: "28px",
               }}
             >
-              {pageTitle}
+              Overview
             </h1>
 
             <div className="hidden h-4 w-px bg-[#1B2A22] sm:block" />
@@ -750,11 +699,7 @@ function DashboardShell() {
             {navigation.map(
               (item, index) => {
                 const active =
-                  !isConnected
-                    ? index === 0
-                    : item.href === "/app/business"
-                      ? pathname === item.href
-                      : pathname.startsWith(item.href);
+                  index === 0;
 
                 if (
                   !isConnected &&
@@ -793,18 +738,11 @@ function DashboardShell() {
           {isRestoring ? (
             <RestoringWallet />
           ) : isConnected ? (
-            isCreateCampaignRoute ? (
-              <BusinessCreateCampaign />
-            ) : isMerchantGrowthCampaignRoute ? (
-              <BusinessCampaignDetailConnected />
-            ) : isCampaignListRoute ? (
-              <BusinessCampaignsConnected />
-            ) : (
-              <BusinessOverviewConnected />
-            )
+            <BusinessOverviewConnected />
           ) : (
             <DisconnectedOverview />
-          )}        </main>
+          )}
+        </main>
       </div>
     </div>
   );

@@ -22,10 +22,6 @@ import {
 } from "@/components/business/BusinessCampaignDetailConnected";
 
 
-import {
-  BusinessCreateCampaign,
-} from "@/components/business/BusinessCreateCampaign";
-
 function OverviewIcon() {
   return (
     <svg
@@ -443,18 +439,6 @@ function DashboardShell() {
 
   const pathname = usePathname();
 
-  const isCreateCampaignRoute =
-    pathname ===
-    "/app/business/campaigns/new";
-
-  const isMerchantGrowthCampaignRoute =
-    pathname ===
-    "/app/business/campaigns/merchant-growth-campaign";
-
-  const isCampaignListRoute =
-    pathname ===
-    "/app/business/campaigns";
-
   const isCampaignDetailPage =
     pathname ===
     "/app/business/campaigns/merchant-growth-campaign";
@@ -465,15 +449,9 @@ function DashboardShell() {
     );
 
   const pageTitle =
-    isConnected && isCreateCampaignRoute
-      ? "Create Campaign"
-      : isConnected &&
-          isMerchantGrowthCampaignRoute
-        ? "Campaign"
-        : isConnected &&
-            isCampaignListRoute
-          ? "Campaigns"
-          : "Overview";
+    isConnected && isCampaignsPage
+      ? "Campaigns"
+      : "Overview";
 
   const shortAddress =
     address
@@ -793,18 +771,17 @@ function DashboardShell() {
           {isRestoring ? (
             <RestoringWallet />
           ) : isConnected ? (
-            isCreateCampaignRoute ? (
-              <BusinessCreateCampaign />
-            ) : isMerchantGrowthCampaignRoute ? (
+            isCampaignDetailPage ? (
               <BusinessCampaignDetailConnected />
-            ) : isCampaignListRoute ? (
+            ) : isCampaignsPage ? (
               <BusinessCampaignsConnected />
             ) : (
               <BusinessOverviewConnected />
             )
           ) : (
             <DisconnectedOverview />
-          )}        </main>
+          )}
+        </main>
       </div>
     </div>
   );

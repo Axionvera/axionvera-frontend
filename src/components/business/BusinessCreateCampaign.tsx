@@ -1,0 +1,739 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+
+type Verifier =
+  | "Operations Team"
+  | "Backend / API Verifier";
+
+type Step = 1 | 2 | 3 | 4;
+
+const steps = [
+  { number: 1, label: "Details" },
+  { number: 2, label: "Reward rule" },
+  { number: 3, label: "Verifier" },
+  { number: 4, label: "Review" },
+] as const;
+
+export function BusinessCreateCampaign() {
+  const [step, setStep] = useState<Step>(1);
+
+  const [name, setName] =
+    useState("Merchant Growth Campaign");
+
+  const [description, setDescription] =
+    useState(
+      "Reward agents for verified merchant onboarding."
+    );
+
+  const [action, setAction] =
+    useState("Merchant onboarded");
+
+  const [reward, setReward] =
+    useState("5");
+
+  const [startDate, setStartDate] =
+    useState("");
+
+  const [endDate, setEndDate] =
+    useState("");
+
+  const [verifier, setVerifier] =
+    useState<Verifier>("Operations Team");
+
+  const [nameError, setNameError] =
+    useState("");
+
+  const [ruleError, setRuleError] =
+    useState("");
+
+  const [submissionNote, setSubmissionNote] =
+    useState("");
+
+  function goToStep(target: Step) {
+    setSubmissionNote("");
+    setStep(target);
+  }
+
+  function continueFromDetails() {
+    if (!name.trim()) {
+      setNameError(
+        "Campaign name is required."
+      );
+      return;
+    }
+
+    setNameError("");
+    goToStep(2);
+  }
+
+  function continueFromRule() {
+    const amount = Number(reward);
+
+    if (!action.trim()) {
+      setRuleError(
+        "Qualifying action is required."
+      );
+      return;
+    }
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      setRuleError(
+        "Reward must be greater than 0."
+      );
+      return;
+    }
+
+    setRuleError("");
+    goToStep(3);
+  }
+
+  function handleCreateCampaign() {
+    /*
+      Do not fake a successful on-chain write.
+
+      The actual create_campaign transaction will
+      be wired to the Axionvera SDK + connected wallet
+      in the next integration step.
+    */
+    setSubmissionNote(
+      "Campaign details are ready. On-chain transaction submission is not wired yet."
+    );
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 pb-16">
+      {/* Breadcrumb + heading */}
+      <div className="flex flex-col gap-2">
+        <nav className="flex items-center gap-2 text-xs text-[#8A938D]">
+          <Link
+            href="/app/business/campaigns"
+            className="transition-colors hover:text-white"
+          >
+            Campaigns
+          </Link>
+
+          <span className="text-[#294034]">
+            /
+          </span>
+
+          <span className="font-medium text-[#02C763]">
+            Create campaign
+          </span>
+        </nav>
+
+        <div className="mt-1">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
+            Create campaign
+          </h2>
+
+          <p className="mt-1 text-sm leading-6 text-[#8A938D]">
+            Define what agents should accomplish,
+            how they are rewarded, and who can
+            verify qualifying activity.
+          </p>
+        </div>
+      </div>
+
+      {/* Stepper */}
+      <div className="rounded-xl border border-[#1B2A22] bg-[#0C120F] p-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {steps.map((item) => {
+            const active =
+              step === item.number;
+
+            const complete =
+              step > item.number;
+
+            return (
+              <button
+                key={item.number}
+                type="button"
+                onClick={() =>
+                  goToStep(
+                    item.number as Step
+                  )
+                }
+                className={[
+                  "flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-left transition-all",
+                  active
+                    ? "border border-[#294034]/60 bg-[#16281E] text-white"
+                    : "border border-transparent bg-[#0C120F]/50 text-[#8A938D] hover:bg-[#142019] hover:text-white",
+                ].join(" ")}
+              >
+                <span
+                  className={[
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                    active
+                      ? "bg-[#02C763] text-[#0A140E]"
+                      : complete
+                        ? "bg-[#02C763]/20 text-[#02C763]"
+                        : "bg-[#1B2A22] text-[#8A938D]",
+                  ].join(" ")}
+                >
+                  {complete
+                    ? "✓"
+                    : item.number}
+                </span>
+
+                <span className="truncate text-sm font-medium">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Form card */}
+      <div className="relative overflow-hidden rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-6 sm:p-8">
+
+        {/* STEP 1 */}
+        {step === 1 && (
+          <section className="flex flex-col gap-6">
+            <div>
+              <h3 className="font-display text-[20px] font-semibold tracking-tight text-white">
+                Campaign details
+              </h3>
+
+              <p className="mt-1 text-sm text-[#8A938D]">
+                Give your campaign a clear name
+                and short description.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-5">
+              <div>
+                <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[#C0C8C2]">
+                  Campaign name{" "}
+                  <span className="text-[#02C763]">
+                    *
+                  </span>
+                </label>
+
+                <input
+                  value={name}
+                  onChange={(event) => {
+                    setName(
+                      event.target.value
+                    );
+                    setNameError("");
+                  }}
+                  placeholder="Merchant Growth Campaign"
+                  className="w-full rounded-[10px] border border-[#1B2A22] bg-[#121915] px-4 py-3 text-sm text-[#E1E3DF] outline-none transition-colors placeholder:text-[#5A665E] focus:border-[#02C763] focus:ring-1 focus:ring-[#02C763]"
+                />
+
+                {nameError && (
+                  <p className="mt-1.5 text-xs text-[#F25F5C]">
+                    {nameError}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-xs font-medium uppercase tracking-wider text-[#C0C8C2]">
+                    Description
+                  </label>
+
+                  <span className="text-xs text-[#5A665E]">
+                    Optional
+                  </span>
+                </div>
+
+                <textarea
+                  value={description}
+                  onChange={(event) =>
+                    setDescription(
+                      event.target.value
+                    )
+                  }
+                  rows={4}
+                  placeholder="Reward agents for verified merchant onboarding."
+                  className="w-full resize-none rounded-[10px] border border-[#1B2A22] bg-[#121915] px-4 py-3 text-sm text-[#E1E3DF] outline-none transition-colors placeholder:text-[#5A665E] focus:border-[#02C763] focus:ring-1 focus:ring-[#02C763]"
+                />
+              </div>
+            </div>
+
+            <div className="mt-2 flex items-center justify-between border-t border-[#1B2A22]/60 pt-6">
+              <Link
+                href="/app/business/campaigns"
+                className="px-4 py-2.5 text-sm font-medium text-[#8A938D] transition-colors hover:text-white"
+              >
+                Cancel
+              </Link>
+
+              <button
+                type="button"
+                onClick={
+                  continueFromDetails
+                }
+                className="inline-flex items-center gap-2 rounded-[10px] bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#0A140E] transition-all hover:bg-[#02D86F]"
+              >
+                Continue
+                <span>→</span>
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* STEP 2 */}
+        {step === 2 && (
+          <section className="flex flex-col gap-6">
+            <div>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#02C763]">
+                Reward rule
+              </span>
+
+              <h3 className="mt-1 font-display text-[20px] font-semibold text-white">
+                Define the qualifying action
+              </h3>
+
+              <p className="mt-1 text-sm leading-6 text-[#8A938D]">
+                Specify what an agent must
+                accomplish and the reward allocated
+                after that activity is verified.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-5">
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-xs font-medium text-[#C0C8C2]">
+                    Qualifying action{" "}
+                    <span className="text-[#02C763]">
+                      *
+                    </span>
+                  </label>
+
+                  <span className="text-[11px] text-[#758078]">
+                    Verified outcome
+                  </span>
+                </div>
+
+                <input
+                  value={action}
+                  onChange={(event) => {
+                    setAction(
+                      event.target.value
+                    );
+                    setRuleError("");
+                  }}
+                  placeholder="e.g. Merchant onboarded"
+                  className="h-11 w-full rounded-lg border border-[#1B2A22] bg-[#121915] px-3.5 text-sm text-[#E1E3DF] outline-none placeholder:text-[#5A665E] focus:border-[#02C763] focus:ring-1 focus:ring-[#02C763]"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-xs font-medium text-[#C0C8C2]">
+                  Reward per verified action{" "}
+                  <span className="text-[#02C763]">
+                    *
+                  </span>
+                </label>
+
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={reward}
+                    onChange={(event) => {
+                      setReward(
+                        event.target.value
+                      );
+                      setRuleError("");
+                    }}
+                    className="h-11 rounded-lg border border-[#1B2A22] bg-[#121915] px-3.5 font-display text-lg text-white outline-none focus:border-[#02C763] focus:ring-1 focus:ring-[#02C763] md:col-span-2"
+                  />
+
+                  <div className="flex h-11 items-center justify-between rounded-lg border border-[#1B2A22] bg-[#121915] px-3.5">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#142019] text-[10px] font-bold text-[#02C763]">
+                        $
+                      </div>
+
+                      <span className="text-xs font-semibold text-white">
+                        USDC
+                      </span>
+                    </div>
+
+                    <span className="text-[10px] font-medium text-[#758078]">
+                      Stellar asset
+                    </span>
+                  </div>
+                </div>
+
+                {ruleError && (
+                  <p className="mt-1.5 text-xs text-[#F25F5C]">
+                    {ruleError}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <label className="text-xs font-medium text-[#C0C8C2]">
+                      Start date
+                    </label>
+
+                    <span className="text-xs text-[#758078]">
+                      Optional
+                    </span>
+                  </div>
+
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(event) =>
+                      setStartDate(
+                        event.target.value
+                      )
+                    }
+                    className="h-11 w-full rounded-lg border border-[#1B2A22] bg-[#121915] px-3.5 text-sm text-[#E1E3DF] outline-none [color-scheme:dark] focus:border-[#02C763]"
+                  />
+                </div>
+
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <label className="text-xs font-medium text-[#C0C8C2]">
+                      End date
+                    </label>
+
+                    <span className="text-xs text-[#758078]">
+                      Optional
+                    </span>
+                  </div>
+
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(event) =>
+                      setEndDate(
+                        event.target.value
+                      )
+                    }
+                    className="h-11 w-full rounded-lg border border-[#1B2A22] bg-[#121915] px-3.5 text-sm text-[#E1E3DF] outline-none [color-scheme:dark] focus:border-[#02C763]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-[#1B2A22] bg-[#101813] p-4">
+                <span className="mt-0.5 text-[#02C763]">
+                  ✓
+                </span>
+
+                <div>
+                  <div className="text-xs font-semibold text-white">
+                    Verification before reward
+                  </div>
+
+                  <p className="mt-0.5 text-xs leading-5 text-[#8A938D]">
+                    A reward is allocated only
+                    after qualifying activity is
+                    verified by an authorised
+                    verifier.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-2 flex items-center justify-between border-t border-[#1B2A22]/60 pt-6">
+              <button
+                type="button"
+                onClick={() =>
+                  goToStep(1)
+                }
+                className="rounded-lg bg-[#142019] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#16281E]"
+              >
+                ← Back
+              </button>
+
+              <button
+                type="button"
+                onClick={
+                  continueFromRule
+                }
+                className="rounded-lg bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#0A140E] transition-colors hover:bg-[#02D86F]"
+              >
+                Continue →
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* STEP 3 */}
+        {step === 3 && (
+          <section className="flex flex-col gap-6">
+            <div>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#02C763]">
+                Authorised verifier
+              </span>
+
+              <h3 className="mt-1 font-display text-[20px] font-semibold text-white">
+                Choose who can verify activity
+              </h3>
+
+              <p className="mt-1 text-sm leading-6 text-[#8A938D]">
+                An authorised verifier confirms
+                whether agents completed the
+                qualifying action before rewards
+                are allocated.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              {(
+                [
+                  {
+                    name: "Operations Team",
+                    description:
+                      "Internal operations or compliance team responsible for confirming qualifying activity.",
+                  },
+                  {
+                    name: "Backend / API Verifier",
+                    description:
+                      "An authorised backend integration that confirms qualifying activity programmatically.",
+                  },
+                ] as const
+              ).map((option) => {
+                const selected =
+                  verifier === option.name;
+
+                return (
+                  <label
+                    key={option.name}
+                    className={[
+                      "flex cursor-pointer items-start justify-between rounded-xl border p-4 transition-all",
+                      selected
+                        ? "border-[#294034] bg-[#16281E]"
+                        : "border-[#1B2A22] bg-[#101813] hover:bg-[#142019]",
+                    ].join(" ")}
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <input
+                        type="radio"
+                        name="verifier"
+                        checked={selected}
+                        onChange={() =>
+                          setVerifier(
+                            option.name
+                          )
+                        }
+                        className="mt-1 h-4 w-4 accent-[#02C763]"
+                      />
+
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-white">
+                            {option.name}
+                          </span>
+
+                          {option.name ===
+                            "Operations Team" && (
+                            <span className="rounded-full bg-[#02C763]/10 px-2 py-0.5 text-[10px] font-semibold text-[#02C763]">
+                              Recommended
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="mt-1 text-xs leading-5 text-[#8A938D]">
+                          {
+                            option.description
+                          }
+                        </p>
+                      </div>
+                    </div>
+
+                    {selected && (
+                      <span className="text-[#02C763]">
+                        ✓
+                      </span>
+                    )}
+                  </label>
+                );
+              })}
+
+              <Link
+                href="/app/business/verifiers"
+                className="mt-1 inline-flex w-fit items-center gap-2 rounded-lg border border-[#1B2A22] bg-[#142019] px-4 py-2 text-xs font-medium text-[#A7B3AB] transition-colors hover:border-[#294034] hover:text-white"
+              >
+                + Manage verifiers
+              </Link>
+            </div>
+
+            <div className="mt-2 flex items-center justify-between border-t border-[#1B2A22]/60 pt-6">
+              <button
+                type="button"
+                onClick={() =>
+                  goToStep(2)
+                }
+                className="rounded-lg bg-[#142019] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#16281E]"
+              >
+                ← Back
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  goToStep(4)
+                }
+                className="rounded-lg bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#0A140E] hover:bg-[#02D86F]"
+              >
+                Continue to Review →
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* STEP 4 */}
+        {step === 4 && (
+          <section className="flex flex-col gap-6">
+            <div>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#02C763]">
+                Review
+              </span>
+
+              <h3 className="mt-1 font-display text-[20px] font-semibold text-white">
+                Review campaign
+              </h3>
+
+              <p className="mt-1 text-sm text-[#8A938D]">
+                Confirm the campaign details
+                before creating it.
+              </p>
+            </div>
+
+            <div className="divide-y divide-[#1B2A22] overflow-hidden rounded-xl border border-[#1B2A22] bg-[#101813]">
+              <ReviewRow
+                label="Campaign"
+                value={name}
+              />
+
+              <ReviewRow
+                label="Description"
+                value={
+                  description.trim() ||
+                  "No description provided"
+                }
+              />
+
+              <ReviewRow
+                label="Qualifying action"
+                value={action}
+              />
+
+              <ReviewRow
+                label="Reward"
+                value={`${reward} USDC per verified action`}
+                accent
+              />
+
+              <ReviewRow
+                label="Verifier"
+                value={verifier}
+              />
+
+              <ReviewRow
+                label="Start date"
+                value={
+                  startDate ||
+                  "No start date"
+                }
+              />
+
+              <ReviewRow
+                label="End date"
+                value={
+                  endDate ||
+                  "No end date"
+                }
+              />
+
+              <ReviewRow
+                label="Initial status"
+                value="Active"
+                accent
+              />
+            </div>
+
+            <div className="rounded-xl border border-[#1B2A22] bg-[#101813] p-4">
+              <div className="text-xs font-semibold text-white">
+                Funding lifecycle
+              </div>
+
+              <p className="mt-1 text-xs leading-5 text-[#8A938D]">
+                You can fund the campaign after
+                it is created. Campaign creation
+                and campaign funding are separate
+                actions.
+              </p>
+            </div>
+
+            {submissionNote && (
+              <div className="rounded-xl border border-[#294034] bg-[#142019] p-4 text-xs leading-5 text-[#A7B3AB]">
+                {submissionNote}
+              </div>
+            )}
+
+            <div className="mt-2 flex items-center justify-between border-t border-[#1B2A22]/60 pt-6">
+              <button
+                type="button"
+                onClick={() =>
+                  goToStep(3)
+                }
+                className="rounded-lg bg-[#142019] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#16281E]"
+              >
+                ← Back
+              </button>
+
+              <button
+                type="button"
+                onClick={
+                  handleCreateCampaign
+                }
+                className="rounded-lg bg-[#02C763] px-7 py-2.5 text-sm font-semibold text-[#0A140E] transition-all hover:bg-[#02D86F]"
+              >
+                Create Campaign
+              </button>
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ReviewRow({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="flex flex-col justify-between gap-2 p-4 sm:flex-row sm:items-center">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-[#758078]">
+        {label}
+      </span>
+
+      <span
+        className={[
+          "max-w-md text-sm font-medium sm:text-right",
+          accent
+            ? "text-[#02C763]"
+            : "text-white",
+        ].join(" ")}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}

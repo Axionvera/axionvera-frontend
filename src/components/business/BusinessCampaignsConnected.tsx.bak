@@ -1,0 +1,461 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+
+type CampaignStatus =
+  | "Active"
+  | "Paused"
+  | "Closed";
+
+type Campaign = {
+  name: string;
+  status: CampaignStatus;
+  reward: string;
+  funded: number;
+  allocated: number;
+  agents: number;
+};
+
+const campaigns: Campaign[] = [
+  {
+    name: "Merchant Growth Campaign",
+    status: "Active",
+    reward: "5 USDC",
+    funded: 1000,
+    allocated: 325,
+    agents: 24,
+  },
+  {
+    name: "Customer Activation Campaign",
+    status: "Active",
+    reward: "3 USDC",
+    funded: 750,
+    allocated: 210,
+    agents: 18,
+  },
+  {
+    name: "Referral Growth Campaign",
+    status: "Active",
+    reward: "5 USDC",
+    funded: 750,
+    allocated: 290,
+    agents: 16,
+  },
+  {
+    name: "Retail Expansion Campaign",
+    status: "Paused",
+    reward: "8 USDC",
+    funded: 500,
+    allocated: 160,
+    agents: 9,
+  },
+];
+
+const filters = [
+  "All",
+  "Active",
+  "Paused",
+  "Closed",
+] as const;
+
+type Filter = (typeof filters)[number];
+
+function PlusIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="2"
+    >
+      <path
+        strokeLinecap="round"
+        d="M12 5v14M5 12h14"
+      />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="1.8"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path
+        strokeLinecap="round"
+        d="m20 20-4-4"
+      />
+    </svg>
+  );
+}
+
+function MoreIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-4 w-4"
+    >
+      <circle cx="5" cy="12" r="1.5" />
+      <circle cx="12" cy="12" r="1.5" />
+      <circle cx="19" cy="12" r="1.5" />
+    </svg>
+  );
+}
+
+function StatusBadge({
+  status,
+}: {
+  status: CampaignStatus;
+}) {
+  if (status === "Active") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-[#294034] bg-[#14281E] px-2.5 py-0.5 text-[11px] text-[#02C763]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
+        Active
+      </span>
+    );
+  }
+
+  if (status === "Paused") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-[#dca32d]/40 bg-[#271900]/60 px-2.5 py-0.5 text-[11px] text-[#fbbe47]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#fbbe47]" />
+        Paused
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#1B2A22] bg-[#101813] px-2.5 py-0.5 text-[11px] text-[#8E9B93]">
+      <span className="h-1.5 w-1.5 rounded-full bg-[#758078]" />
+      Closed
+    </span>
+  );
+}
+
+export function BusinessCampaignsConnected() {
+  const [filter, setFilter] =
+    useState<Filter>("All");
+
+  const [search, setSearch] =
+    useState("");
+
+  const visibleCampaigns =
+    useMemo(() => {
+      const query =
+        search.trim().toLowerCase();
+
+      return campaigns.filter(
+        (campaign) => {
+          const matchesFilter =
+            filter === "All" ||
+            campaign.status === filter;
+
+          const matchesSearch =
+            !query ||
+            campaign.name
+              .toLowerCase()
+              .includes(query);
+
+          return (
+            matchesFilter &&
+            matchesSearch
+          );
+        }
+      );
+    }, [filter, search]);
+
+  const totalFunded =
+    campaigns.reduce(
+      (sum, campaign) =>
+        sum + campaign.funded,
+      0
+    );
+
+  const totalAllocated =
+    campaigns.reduce(
+      (sum, campaign) =>
+        sum + campaign.allocated,
+      0
+    );
+
+  const availableFunds =
+    totalFunded - totalAllocated;
+
+  return (
+    <div className="flex w-full flex-col gap-6">
+
+      {/* PAGE HEADER */}
+      <section className="flex flex-col gap-4 pb-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
+            Campaigns
+          </h2>
+
+          <p className="mt-1 text-sm text-[#8E9B93]">
+            Create, fund and manage reward campaigns.
+          </p>
+        </div>
+
+        <Link
+          href="/app/business/campaigns/new"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-[#02C763] px-4 text-sm font-semibold text-[#0B0F0C] transition-all duration-200 hover:-translate-y-px hover:bg-[#02D86F] hover:shadow-[0_8px_24px_rgba(2,199,99,0.14)] active:translate-y-0"
+        >
+          <PlusIcon />
+          Create Campaign
+        </Link>
+      </section>
+
+      {/* SUMMARY */}
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8E9B93]">
+            Total campaigns
+          </span>
+
+          <div className="mt-3">
+            <span className="font-display text-3xl font-semibold tabular-nums text-white">
+              {campaigns.length}
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8E9B93]">
+            Total funded
+          </span>
+
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className="font-display text-3xl font-semibold tabular-nums text-white">
+              {totalFunded.toLocaleString()}
+            </span>
+
+            <span className="text-sm text-[#8E9B93]">
+              USDC
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8E9B93]">
+            Available funds
+          </span>
+
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className="font-display text-3xl font-semibold tabular-nums text-[#02C763]">
+              {availableFunds.toLocaleString()}
+            </span>
+
+            <span className="text-sm text-[#02C763]/80">
+              USDC
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* FILTERS */}
+      <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="inline-flex w-fit items-center rounded-xl border border-[#1B2A22] bg-[#0C120F] p-1 text-xs font-medium">
+          {filters.map((item) => {
+            const active =
+              filter === item;
+
+            return (
+              <button
+                key={item}
+                type="button"
+                onClick={() =>
+                  setFilter(item)
+                }
+                className={[
+                  "rounded-lg px-3.5 py-1.5 transition-all duration-150",
+                  active
+                    ? "border border-[#294034]/60 bg-[#16281E] text-white shadow-sm"
+                    : "border border-transparent text-[#8E9B93] hover:text-white",
+                ].join(" ")}
+              >
+                {item}
+              </button>
+            );
+          })}
+        </div>
+
+        <label className="relative block w-full sm:w-[280px]">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#718277]">
+            <SearchIcon />
+          </span>
+
+          <input
+            type="search"
+            value={search}
+            onChange={(event) =>
+              setSearch(
+                event.target.value
+              )
+            }
+            placeholder="Search campaigns"
+            className="w-full rounded-[10px] border border-[#1B2A22] bg-[#0C120F] py-2 pl-9 pr-3.5 text-sm text-[#E1E3DF] outline-none transition-colors placeholder:text-[#627368] focus:border-[#294034]"
+          />
+        </label>
+      </section>
+
+      {/* CAMPAIGN TABLE */}
+      <section className="flex flex-col overflow-hidden rounded-2xl border border-[#1B2A22] bg-[#0C120F]">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-[#1B2A22] bg-[#101813] text-[10px] uppercase tracking-wider text-[#718277]">
+                <th className="px-5 py-3.5 font-medium">
+                  Campaign
+                </th>
+
+                <th className="px-4 py-3.5 font-medium">
+                  Status
+                </th>
+
+                <th className="px-4 py-3.5 text-right font-medium">
+                  Reward
+                </th>
+
+                <th className="px-4 py-3.5 text-right font-medium">
+                  Funded
+                </th>
+
+                <th className="px-4 py-3.5 text-right font-medium">
+                  Allocated
+                </th>
+
+                <th className="px-4 py-3.5 text-right font-medium">
+                  Available
+                </th>
+
+                <th className="px-4 py-3.5 font-medium">
+                  Agents
+                </th>
+
+                <th className="px-5 py-3.5 text-right font-medium">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-[#1B2A22]/50 text-sm">
+              {visibleCampaigns.map(
+                (campaign) => {
+                  const available =
+                    campaign.funded -
+                    campaign.allocated;
+
+                  return (
+                    <tr
+                      key={campaign.name}
+                      className="group transition-colors hover:bg-[#142019]/60"
+                    >
+                      <td className="whitespace-nowrap px-5 py-4 font-medium text-white">
+                        {campaign.name}
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <StatusBadge
+                          status={
+                            campaign.status
+                          }
+                        />
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-right tabular-nums text-[#E1E3DF]">
+                        {campaign.reward}
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-right tabular-nums text-[#8E9B93]">
+                        {campaign.funded.toLocaleString()} USDC
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-right tabular-nums text-white">
+                        {campaign.allocated.toLocaleString()} USDC
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-right tabular-nums text-[#02C763]">
+                        {available.toLocaleString()} USDC
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-[#8E9B93]">
+                        {campaign.agents} agents
+                      </td>
+
+                      <td className="whitespace-nowrap px-5 py-4 text-right">
+                        <button
+                          type="button"
+                          aria-label={`Actions for ${campaign.name}`}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-transparent text-[#718277] transition-colors hover:border-[#1B2A22] hover:bg-[#16281E] hover:text-white"
+                        >
+                          <MoreIcon />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
+
+              {visibleCampaigns.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-5 py-16 text-center"
+                  >
+                    <div className="text-sm font-medium text-[#A7B3AB]">
+                      No campaigns found
+                    </div>
+
+                    <div className="mt-1 text-xs text-[#627368]">
+                      Try changing the filter or search term.
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-[#1B2A22] bg-[#0C120F] px-5 py-3.5 text-xs text-[#8E9B93]">
+          <span>
+            Showing {visibleCampaigns.length}{" "}
+            {visibleCampaigns.length === 1
+              ? "campaign"
+              : "campaigns"}
+          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled
+              className="cursor-not-allowed rounded-md border border-[#1B2A22] bg-[#101813] px-2.5 py-1 text-[#627368] opacity-50"
+            >
+              Previous
+            </button>
+
+            <span className="px-2 font-mono text-[11px] text-[#9DA8A1]">
+              1 / 1
+            </span>
+
+            <button
+              type="button"
+              disabled
+              className="cursor-not-allowed rounded-md border border-[#1B2A22] bg-[#101813] px-2.5 py-1 text-[#627368] opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
