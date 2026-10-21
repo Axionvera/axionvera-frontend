@@ -110,7 +110,7 @@ export function BusinessCreateCampaign() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 pb-16">
+    <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-8 pb-16">
       {/* Breadcrumb + heading */}
       <div className="flex flex-col gap-2">
         <nav className="flex items-center gap-2 text-xs text-[#8A938D]">

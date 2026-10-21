@@ -481,7 +481,7 @@ function DashboardShell() {
       : null;
 
   return (
-    <div className="flex min-h-screen overflow-hidden bg-[#101412] text-[#F3F7F4]">
+    <div className="flex h-screen overflow-hidden bg-[#101412] text-[#F3F7F4]">
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden h-screen w-[256px] shrink-0 select-none flex-col justify-between border-r border-[#1B2A22] bg-[#0C120F] lg:flex">
         <div className="flex min-h-0 flex-1 flex-col">
@@ -647,7 +647,7 @@ function DashboardShell() {
       </aside>
 
       {/* MAIN APP */}
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#1B2A22] bg-[#0C120F] px-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <Link
@@ -789,7 +789,7 @@ function DashboardShell() {
           </div>
         </div>
 
-        <main className="flex flex-1 overflow-y-auto bg-[#101412] p-4 sm:p-6 lg:p-8">
+        <main className="flex h-0 min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-[#101412] p-4 pb-10 sm:p-6 sm:pb-12 lg:p-8 lg:pb-14">
           {isRestoring ? (
             <RestoringWallet />
           ) : isConnected ? (

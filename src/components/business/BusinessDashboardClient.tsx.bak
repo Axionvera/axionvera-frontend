@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import {
@@ -12,6 +13,18 @@ import {
   BusinessOverviewConnected,
 } from "@/components/business/BusinessOverviewConnected";
 
+import {
+  BusinessCampaignsConnected,
+} from "@/components/business/BusinessCampaignsConnected";
+
+import {
+  BusinessCampaignDetailConnected,
+} from "@/components/business/BusinessCampaignDetailConnected";
+
+
+import {
+  BusinessCreateCampaign,
+} from "@/components/business/BusinessCreateCampaign";
 
 function OverviewIcon() {
   return (
@@ -428,13 +441,47 @@ function DashboardShell() {
   const [accountOpen, setAccountOpen] =
     useState(false);
 
+  const pathname = usePathname();
+
+  const isCreateCampaignRoute =
+    pathname ===
+    "/app/business/campaigns/new";
+
+  const isMerchantGrowthCampaignRoute =
+    pathname ===
+    "/app/business/campaigns/merchant-growth-campaign";
+
+  const isCampaignListRoute =
+    pathname ===
+    "/app/business/campaigns";
+
+  const isCampaignDetailPage =
+    pathname ===
+    "/app/business/campaigns/merchant-growth-campaign";
+
+  const isCampaignsPage =
+    pathname.startsWith(
+      "/app/business/campaigns"
+    );
+
+  const pageTitle =
+    isConnected && isCreateCampaignRoute
+      ? "Create Campaign"
+      : isConnected &&
+          isMerchantGrowthCampaignRoute
+        ? "Campaign"
+        : isConnected &&
+            isCampaignListRoute
+          ? "Campaigns"
+          : "Overview";
+
   const shortAddress =
     address
       ? shortenAddress(address)
       : null;
 
   return (
-    <div className="flex min-h-screen overflow-hidden bg-[#101412] text-[#F3F7F4]">
+    <div className="flex h-screen overflow-hidden bg-[#101412] text-[#F3F7F4]">
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden h-screen w-[256px] shrink-0 select-none flex-col justify-between border-r border-[#1B2A22] bg-[#0C120F] lg:flex">
         <div className="flex min-h-0 flex-1 flex-col">
@@ -465,7 +512,11 @@ function DashboardShell() {
             {navigation.map(
               (item, index) => {
                 const active =
-                  index === 0;
+                  !isConnected
+                    ? index === 0
+                    : item.href === "/app/business"
+                      ? pathname === item.href
+                      : pathname.startsWith(item.href);
 
                 if (
                   !isConnected &&
@@ -596,7 +647,7 @@ function DashboardShell() {
       </aside>
 
       {/* MAIN APP */}
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#1B2A22] bg-[#0C120F] px-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <Link
@@ -617,7 +668,7 @@ function DashboardShell() {
                 lineHeight: "28px",
               }}
             >
-              Overview
+              {pageTitle}
             </h1>
 
             <div className="hidden h-4 w-px bg-[#1B2A22] sm:block" />
@@ -699,7 +750,11 @@ function DashboardShell() {
             {navigation.map(
               (item, index) => {
                 const active =
-                  index === 0;
+                  !isConnected
+                    ? index === 0
+                    : item.href === "/app/business"
+                      ? pathname === item.href
+                      : pathname.startsWith(item.href);
 
                 if (
                   !isConnected &&
@@ -734,15 +789,22 @@ function DashboardShell() {
           </div>
         </div>
 
-        <main className="flex flex-1 overflow-y-auto bg-[#101412] p-4 sm:p-6 lg:p-8">
+        <main className="flex min-h-0 flex-1 overflow-y-auto bg-[#101412] p-4 sm:p-6 lg:p-8">
           {isRestoring ? (
             <RestoringWallet />
           ) : isConnected ? (
-            <BusinessOverviewConnected />
+            isCreateCampaignRoute ? (
+              <BusinessCreateCampaign />
+            ) : isMerchantGrowthCampaignRoute ? (
+              <BusinessCampaignDetailConnected />
+            ) : isCampaignListRoute ? (
+              <BusinessCampaignsConnected />
+            ) : (
+              <BusinessOverviewConnected />
+            )
           ) : (
             <DisconnectedOverview />
-          )}
-        </main>
+          )}        </main>
       </div>
     </div>
   );
