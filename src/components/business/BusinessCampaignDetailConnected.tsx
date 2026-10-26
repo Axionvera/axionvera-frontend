@@ -200,13 +200,13 @@ export function BusinessCampaignDetailConnected() {
         </div>
 
         <div className="flex items-center gap-3 self-start md:self-auto">
-          <button
-            type="button"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#02C763] px-4 text-sm font-semibold text-[#050806] transition-all duration-150 hover:-translate-y-px hover:bg-[#02D86F]"
-          >
+          <Link
+              href="/app/business/campaigns/merchant-growth-campaign?action=fund"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#02C763] px-4 text-sm font-semibold text-[#050806] transition-all duration-150 hover:-translate-y-px hover:bg-[#02D86F]"
+            >
             <PlusIcon />
             Fund Campaign
-          </button>
+          </Link>
 
           <div className="relative">
             <button

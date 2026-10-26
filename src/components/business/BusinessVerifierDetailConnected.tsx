@@ -168,10 +168,13 @@ export function BusinessVerifierDetailConnected() {
     <div className="w-full pb-16">
       {/* BREADCRUMB */}
       <nav className="mb-6 flex items-center gap-2 text-xs text-[#718277]">
-        <span className="flex items-center gap-1.5">
+        <Link
+          href="/app/business/verifiers"
+          className="flex items-center gap-1.5 transition-colors hover:text-white"
+        >
           <ArrowLeft />
           Verifiers
-        </span>
+        </Link>
 
         <span className="text-[#294034]">/</span>
 
