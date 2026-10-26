@@ -31,6 +31,14 @@ import {
 } from "@/components/business/BusinessVerifierDetailConnected";
 
 import {
+  BusinessVerifiersConnected,
+} from "@/components/business/BusinessVerifiersConnected";
+
+import {
+  BusinessAddVerifier,
+} from "@/components/business/BusinessAddVerifier";
+
+import {
   BusinessActivityConnected,
 } from "@/components/business/BusinessActivityConnected";
 
@@ -523,6 +531,12 @@ function DashboardShell() {
     pathname ===
     "/app/business/verifiers/operations-team";
 
+  const isVerifiersRoute =
+    pathname === "/app/business/verifiers";
+
+  const isAddVerifierRoute =
+    pathname === "/app/business/verifiers/new";
+
 
   const shortAddress =
     address
@@ -848,6 +862,10 @@ function DashboardShell() {
               <BusinessCampaignDetailConnected />
             ) : isCampaignListRoute ? (
               <BusinessCampaignsConnected />
+            ) : isAddVerifierRoute ? (
+              <BusinessAddVerifier />
+            ) : isVerifiersRoute ? (
+              <BusinessVerifiersConnected />
             ) : isOperationsTeamVerifierRoute ? (
               <BusinessVerifierDetailConnected />
             ) : isActivityVerifiedRoute ? (
