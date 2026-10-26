@@ -1,5 +1,7 @@
 "use client";
 
+import { useDashboardMotion } from "@/hooks/useDashboardMotion";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -965,6 +967,8 @@ function DashboardShell() {
 
 
 export function BusinessDashboardClient() {
+  useDashboardMotion();
+
   return (
     <BusinessWalletProvider>
       <DashboardShell />
