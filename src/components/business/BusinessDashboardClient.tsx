@@ -26,6 +26,10 @@ import {
   BusinessCreateCampaign,
 } from "@/components/business/BusinessCreateCampaign";
 
+import {
+  BusinessVerifierDetailConnected,
+} from "@/components/business/BusinessVerifierDetailConnected";
+
 function OverviewIcon() {
   return (
     <svg
@@ -465,15 +469,23 @@ function DashboardShell() {
     );
 
   const pageTitle =
-    isConnected && isCreateCampaignRoute
-      ? "Create Campaign"
-      : isConnected &&
-          isMerchantGrowthCampaignRoute
-        ? "Campaign"
-        : isConnected &&
-            isCampaignListRoute
-          ? "Campaigns"
-          : "Overview";
+    !isConnected
+      ? "Overview"
+      : isCreateCampaignRoute
+        ? "Create Campaign"
+        : isMerchantGrowthCampaignRoute
+          ? "Campaign"
+          : isCampaignListRoute
+            ? "Campaigns"
+            : pathname.startsWith(
+                "/app/business/verifiers"
+              )
+              ? "Verifiers"
+              : "Overview";
+
+  const isOperationsTeamVerifierRoute =
+    pathname ===
+    "/app/business/verifiers/operations-team";
 
   const shortAddress =
     address
@@ -799,6 +811,8 @@ function DashboardShell() {
               <BusinessCampaignDetailConnected />
             ) : isCampaignListRoute ? (
               <BusinessCampaignsConnected />
+            ) : isOperationsTeamVerifierRoute ? (
+              <BusinessVerifierDetailConnected />
             ) : (
               <BusinessOverviewConnected />
             )
