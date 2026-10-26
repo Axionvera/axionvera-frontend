@@ -30,6 +30,18 @@ import {
   BusinessVerifierDetailConnected,
 } from "@/components/business/BusinessVerifierDetailConnected";
 
+import {
+  BusinessActivityConnected,
+} from "@/components/business/BusinessActivityConnected";
+
+import {
+  BusinessActivityReviewConnected,
+} from "@/components/business/BusinessActivityReviewConnected";
+
+import {
+  BusinessActivityVerifiedConnected,
+} from "@/components/business/BusinessActivityVerifiedConnected";
+
 function OverviewIcon() {
   return (
     <svg
@@ -468,6 +480,17 @@ function DashboardShell() {
       "/app/business/campaigns"
     );
 
+  const isActivityRoute =
+    pathname.startsWith("/app/business/activity");
+
+  const isActivityReviewRoute =
+    pathname ===
+    "/app/business/activity/amina-t/merchant-onboarded";
+
+  const isActivityVerifiedRoute =
+    pathname ===
+    "/app/business/activity/amina-t/merchant-onboarded/verified";
+
   const pageTitle =
     !isConnected
       ? "Overview"
@@ -481,11 +504,14 @@ function DashboardShell() {
                 "/app/business/verifiers"
               )
               ? "Verifiers"
-              : "Overview";
+              : isActivityRoute
+                ? "Activity"
+                : "Overview";
 
   const isOperationsTeamVerifierRoute =
     pathname ===
     "/app/business/verifiers/operations-team";
+
 
   const shortAddress =
     address
@@ -813,6 +839,12 @@ function DashboardShell() {
               <BusinessCampaignsConnected />
             ) : isOperationsTeamVerifierRoute ? (
               <BusinessVerifierDetailConnected />
+            ) : isActivityVerifiedRoute ? (
+              <BusinessActivityVerifiedConnected />
+            ) : isActivityReviewRoute ? (
+              <BusinessActivityReviewConnected />
+            ) : isActivityRoute ? (
+              <BusinessActivityConnected />
             ) : (
               <BusinessOverviewConnected />
             )
