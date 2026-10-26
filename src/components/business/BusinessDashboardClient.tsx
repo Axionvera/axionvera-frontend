@@ -42,6 +42,10 @@ import {
   BusinessActivityVerifiedConnected,
 } from "@/components/business/BusinessActivityVerifiedConnected";
 
+import {
+  BusinessActivityViewConnected,
+} from "@/components/business/BusinessActivityViewConnected";
+
 function OverviewIcon() {
   return (
     <svg
@@ -491,6 +495,13 @@ function DashboardShell() {
     pathname ===
     "/app/business/activity/amina-t/merchant-onboarded/verified";
 
+  const isActivityViewRoute =
+    [
+      "/app/business/activity/sarah-a/merchant-onboarded",
+      "/app/business/activity/david-k/customer-activated",
+      "/app/business/activity/tunde-o/referral-converted",
+    ].includes(pathname);
+
   const pageTitle =
     !isConnected
       ? "Overview"
@@ -843,6 +854,8 @@ function DashboardShell() {
               <BusinessActivityVerifiedConnected />
             ) : isActivityReviewRoute ? (
               <BusinessActivityReviewConnected />
+            ) : isActivityViewRoute ? (
+              <BusinessActivityViewConnected />
             ) : isActivityRoute ? (
               <BusinessActivityConnected />
             ) : (

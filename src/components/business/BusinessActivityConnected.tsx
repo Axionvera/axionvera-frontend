@@ -13,6 +13,7 @@ type ActivityRow = {
   status: ActivityStatus;
   reward: string | null;
   time: string;
+  href?: string;
 };
 
 const rows: ActivityRow[] = [
@@ -24,6 +25,7 @@ const rows: ActivityRow[] = [
     status: "verified",
     reward: "+5 USDC",
     time: "15m ago",
+    href: "/app/business/activity/sarah-a/merchant-onboarded",
   },
   {
     initials: "DK",
@@ -33,6 +35,7 @@ const rows: ActivityRow[] = [
     status: "verified",
     reward: "+3 USDC",
     time: "1h ago",
+    href: "/app/business/activity/david-k/customer-activated",
   },
   {
     initials: "AT",
@@ -51,6 +54,7 @@ const rows: ActivityRow[] = [
     status: "verified",
     reward: "+5 USDC",
     time: "Yesterday",
+    href: "/app/business/activity/tunde-o/referral-converted",
   },
   {
     initials: "FR",
@@ -425,13 +429,13 @@ export function BusinessActivityConnected() {
                     </td>
 
                     <td className="whitespace-nowrap px-4 py-4 text-right">
-                      {verified ? (
-                        <button
-                          type="button"
-                          className="rounded border border-[#1B2A22] bg-[#101412] px-2.5 py-1 text-xs font-medium text-[#D0D5D1] transition-colors hover:bg-[#191C1A] hover:text-white"
+                      {verified && row.href ? (
+                        <Link
+                          href={row.href}
+                          className="inline-flex rounded border border-[#1B2A22] bg-[#101412] px-2.5 py-1 text-xs font-medium text-[#D0D5D1] transition-colors hover:bg-[#191C1A] hover:text-white"
                         >
                           View
-                        </button>
+                        </Link>
                       ) : row.agent === "Amina T." ? (
                         <Link
                           href="/app/business/activity/amina-t/merchant-onboarded"
