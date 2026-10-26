@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   BusinessWalletProvider,
@@ -29,6 +29,14 @@ import {
 import {
   BusinessVerifierDetailConnected,
 } from "@/components/business/BusinessVerifierDetailConnected";
+
+import {
+  BusinessVerifierAssignmentsConnected,
+} from "@/components/business/BusinessVerifierAssignmentsConnected";
+
+import {
+  BusinessVerifierAssignmentsSuccessConnected,
+} from "@/components/business/BusinessVerifierAssignmentsSuccessConnected";
 
 import {
   BusinessVerifiersConnected,
@@ -473,6 +481,51 @@ function DashboardShell() {
   const [accountOpen, setAccountOpen] =
     useState(false);
 
+  // Auto-dismiss business wallet menu: accountOpen
+  useEffect(() => {
+    if (!accountOpen) return;
+
+    const closeOnDocumentClick = () => {
+      setAccountOpen(false);
+    };
+
+    const closeOnEscape = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setAccountOpen(false);
+      }
+    };
+
+    /*
+     * Use click instead of pointerdown.
+     * This allows a menu item's own onClick
+     * to run before the menu is dismissed.
+     */
+    document.addEventListener(
+      "click",
+      closeOnDocumentClick
+    );
+
+    document.addEventListener(
+      "keydown",
+      closeOnEscape
+    );
+
+    return () => {
+      document.removeEventListener(
+        "click",
+        closeOnDocumentClick
+      );
+
+      document.removeEventListener(
+        "keydown",
+        closeOnEscape
+      );
+    };
+  }, [accountOpen, setAccountOpen]);
+
+
   const pathname = usePathname();
 
   const isCreateCampaignRoute =
@@ -516,6 +569,14 @@ function DashboardShell() {
 
   const isAgentsRoute =
     pathname === "/app/business/agents";
+
+  const isVerifierAssignmentsSuccessRoute =
+    pathname ===
+    "/app/business/verifiers/operations-team/assignments/success";
+
+  const isVerifierAssignmentsRoute =
+    pathname ===
+    "/app/business/verifiers/operations-team/assignments";
 
   const pageTitle =
     !isConnected
@@ -875,7 +936,11 @@ function DashboardShell() {
               <BusinessAddVerifier />
             ) : isVerifiersRoute ? (
               <BusinessVerifiersConnected />
-            ) : isOperationsTeamVerifierRoute ? (
+             ) : isVerifierAssignmentsSuccessRoute ? (
+            <BusinessVerifierAssignmentsSuccessConnected />
+          ) : isVerifierAssignmentsRoute ? (
+            <BusinessVerifierAssignmentsConnected />
+          ) : isOperationsTeamVerifierRoute ? (
               <BusinessVerifierDetailConnected />
             ) : isActivityVerifiedRoute ? (
               <BusinessActivityVerifiedConnected />

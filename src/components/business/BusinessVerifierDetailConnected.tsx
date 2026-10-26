@@ -203,16 +203,15 @@ export function BusinessVerifierDetailConnected() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={showAssignmentNote}
-          className="inline-flex self-start items-center justify-center gap-2 rounded-xl border border-[#1B2A22] bg-[#142019] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:border-[#294034] hover:bg-[#16281E]"
-        >
+        <Link
+            href="/app/business/verifiers/operations-team/assignments"
+            className="inline-flex items-center justify-center rounded-[10px] bg-[#02C763] px-4 py-2.5 text-sm font-semibold text-[#050806] transition-colors hover:bg-[#02D86F]"
+          >
           <span className="text-[#718277]">
             <TuneIcon />
           </span>
           Manage assignments
-        </button>
+        </Link>
       </header>
 
       {assignmentNote && (

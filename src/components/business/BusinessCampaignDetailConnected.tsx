@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 import {
@@ -113,7 +113,83 @@ const activity = [
 ];
 
 export function BusinessCampaignDetailConnected() {
+
+
+  const [pauseCampaignOpen, setPauseCampaignOpen] =
+    useState(false);
+
+  // Auto-dismiss pause modal with Escape
+  useEffect(() => {
+    if (!pauseCampaignOpen) return;
+
+    const closePauseModal = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setPauseCampaignOpen(false);
+      }
+    };
+
+    document.addEventListener(
+      "keydown",
+      closePauseModal
+    );
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        closePauseModal
+      );
+    };
+  }, [pauseCampaignOpen]);
+
+
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Auto-dismiss campaign actions menu: menuOpen
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const closeOnDocumentClick = () => {
+      setMenuOpen(false);
+    };
+
+    const closeOnEscape = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    /*
+     * Use click instead of pointerdown.
+     * This allows a menu item's own onClick
+     * to run before the menu is dismissed.
+     */
+    document.addEventListener(
+      "click",
+      closeOnDocumentClick
+    );
+
+    document.addEventListener(
+      "keydown",
+      closeOnEscape
+    );
+
+    return () => {
+      document.removeEventListener(
+        "click",
+        closeOnDocumentClick
+      );
+
+      document.removeEventListener(
+        "keydown",
+        closeOnEscape
+      );
+    };
+  }, [menuOpen, setMenuOpen]);
+
   const searchParams = useSearchParams();
 
   const fundingAction = searchParams.get("action");
@@ -208,6 +284,8 @@ export function BusinessCampaignDetailConnected() {
             Fund Campaign
           </Link>
 
+
+
           <div className="relative">
             <button
               type="button"
@@ -224,7 +302,11 @@ export function BusinessCampaignDetailConnected() {
                 <button
                   type="button"
                   className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-medium text-[#9DA8A1] transition-colors hover:bg-[#16281E] hover:text-white"
-                >
+                
+              onClick={() => {
+                setPauseCampaignOpen(true);
+              }}
+            >
                   <PauseIcon />
                   Pause Campaign
                 </button>
@@ -496,6 +578,145 @@ export function BusinessCampaignDetailConnected() {
           </div>
         </div>
       </section>
-    </div>
+    
+
+      {/* Pause campaign confirmation */}
+      {pauseCampaignOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pause-campaign-title"
+          onClick={() =>
+            setPauseCampaignOpen(false)
+          }
+        >
+          <div
+            className="relative w-full max-w-[480px] rounded-2xl border border-[#1B2A22] bg-[#101813] p-6 shadow-2xl"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="h-[22px] w-[22px]"
+                strokeWidth="1.9"
+              >
+                <rect
+                  x="6.5"
+                  y="5"
+                  width="3.5"
+                  height="14"
+                  rx="1"
+                />
+                <rect
+                  x="14"
+                  y="5"
+                  width="3.5"
+                  height="14"
+                  rx="1"
+                />
+              </svg>
+            </div>
+
+            <h2
+              id="pause-campaign-title"
+              className="font-display text-xl font-semibold tracking-tight text-white"
+            >
+              Pause campaign?
+            </h2>
+
+            <p className="mt-2 text-sm leading-relaxed text-[#9DA8A1]">
+              Pausing Merchant Growth Campaign will stop
+              new reward allocations until the campaign
+              is resumed.
+            </p>
+
+            <div className="my-4 flex items-start gap-2.5 rounded-xl border border-[#294034] bg-[#142019] p-3.5">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="mt-0.5 h-[18px] w-[18px] shrink-0 text-amber-400"
+                strokeWidth="1.8"
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path
+                  strokeLinecap="round"
+                  d="M12 11v5M12 8h.01"
+                />
+              </svg>
+
+              <span className="text-xs leading-normal text-[#E1E3DF]">
+                Rewards that have already been allocated
+                will remain claimable by agents.
+              </span>
+            </div>
+
+            <div className="mb-6 space-y-2.5 rounded-xl border border-[#1B2A22] bg-[#080D0A] p-3.5 text-xs">
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-[#718277]">
+                  Campaign
+                </span>
+
+                <span className="text-right font-medium text-white">
+                  Merchant Growth Campaign
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-[#718277]">
+                  Current status
+                </span>
+
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2 py-0.5 text-[11px] font-medium text-[#02C763]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
+                  Active
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-[#718277]">
+                  Available funds
+                </span>
+
+                <span className="font-semibold text-white">
+                  675 USDC
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPauseCampaignOpen(false)
+                }
+                className="rounded-lg border border-[#294034] px-4 py-2.5 text-sm font-medium text-[#E1E3DF] transition-colors hover:bg-[#142019] hover:text-white"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPauseCampaignOpen(false)
+                }
+                title="Paused campaign state will be connected after its UI is added"
+                className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-neutral-950 shadow-sm transition-colors hover:bg-amber-400"
+              >
+                Pause campaign
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+</div>
   );
 }

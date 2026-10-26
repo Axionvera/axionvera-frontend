@@ -43,6 +43,10 @@ import {
 } from "@/components/business/BusinessActivityConnected";
 
 import {
+  BusinessAgentsConnected,
+} from "@/components/business/BusinessAgentsConnected";
+
+import {
   BusinessActivityReviewConnected,
 } from "@/components/business/BusinessActivityReviewConnected";
 
@@ -510,6 +514,9 @@ function DashboardShell() {
       "/app/business/activity/tunde-o/referral-converted",
     ].includes(pathname);
 
+  const isAgentsRoute =
+    pathname === "/app/business/agents";
+
   const pageTitle =
     !isConnected
       ? "Overview"
@@ -523,9 +530,11 @@ function DashboardShell() {
                 "/app/business/verifiers"
               )
               ? "Verifiers"
-              : isActivityRoute
-                ? "Activity"
-                : "Overview";
+              : isAgentsRoute
+                ? "Agents"
+                : isActivityRoute
+                  ? "Activity"
+                  : "Overview";
 
   const isOperationsTeamVerifierRoute =
     pathname ===
@@ -874,6 +883,8 @@ function DashboardShell() {
               <BusinessActivityReviewConnected />
             ) : isActivityViewRoute ? (
               <BusinessActivityViewConnected />
+            ) : isAgentsRoute ? (
+              <BusinessAgentsConnected />
             ) : isActivityRoute ? (
               <BusinessActivityConnected />
             ) : (

@@ -3,54 +3,34 @@
 import Link from "next/link";
 import { useState } from "react";
 
-type CampaignAssignment = {
+type Campaign = {
   id: string;
   name: string;
-  description: string;
-  active: boolean;
+  status: "Active" | "Paused";
 };
 
-const campaigns: CampaignAssignment[] = [
+const campaigns: Campaign[] = [
   {
     id: "merchant-growth",
     name: "Merchant Growth Campaign",
-    description:
-      "Reward agents for verified merchant onboarding.",
-    active: true,
+    status: "Active",
   },
   {
     id: "customer-activation",
     name: "Customer Activation Campaign",
-    description:
-      "Reward agents for verified customer activation.",
-    active: true,
+    status: "Active",
   },
   {
     id: "referral-growth",
     name: "Referral Growth Campaign",
-    description:
-      "Reward agents for verified referral conversions.",
-    active: false,
+    status: "Active",
+  },
+  {
+    id: "retail-expansion",
+    name: "Retail Expansion Campaign",
+    status: "Paused",
   },
 ];
-
-function ArrowLeft() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      className="h-4 w-4"
-      strokeWidth="1.9"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M19 12H5m5-5-5 5 5 5"
-      />
-    </svg>
-  );
-}
 
 function ShieldIcon() {
   return (
@@ -58,7 +38,7 @@ function ShieldIcon() {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      className="h-5 w-5"
+      className="h-4 w-4"
       strokeWidth="1.8"
     >
       <path
@@ -70,48 +50,89 @@ function ShieldIcon() {
   );
 }
 
-export function BusinessVerifierAssignmentsConnected() {
-  const [assigned, setAssigned] = useState<
-    Record<string, boolean>
-  >(
-    Object.fromEntries(
-      campaigns.map((campaign) => [
-        campaign.id,
-        campaign.active,
-      ])
-    )
+function TeamIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-5 w-5"
+      strokeWidth="1.8"
+    >
+      <circle cx="9" cy="8" r="3" />
+      <circle cx="17" cy="10" r="2" />
+      <path
+        strokeLinecap="round"
+        d="M4 19c.5-3 2.2-5 5-5s4.5 2 5 5M14.5 15c1.9.1 3.2 1.4 3.5 3"
+      />
+    </svg>
   );
+}
 
-  const [saved, setSaved] = useState(false);
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-3.5 w-3.5"
+      strokeWidth="2.4"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m6 12 4 4 8-8"
+      />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-[18px] w-[18px]"
+      strokeWidth="1.8"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path
+        strokeLinecap="round"
+        d="M12 11v5M12 8h.01"
+      />
+    </svg>
+  );
+}
+
+export function BusinessVerifierAssignmentsConnected() {
+  const [selected, setSelected] = useState<string[]>([
+    "merchant-growth",
+    "customer-activation",
+  ]);
 
   function toggleCampaign(id: string) {
-    setAssigned((current) => ({
-      ...current,
-      [id]: !current[id],
-    }));
-
-    setSaved(false);
+    setSelected((current) =>
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id]
+    );
   }
 
-  const assignedCount = Object.values(
-    assigned
-  ).filter(Boolean).length;
-
   return (
-    <div className="mx-auto w-full max-w-4xl pb-16">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 pb-16">
 
       {/* BREADCRUMB */}
-      <nav className="mb-6 flex flex-wrap items-center gap-2 text-xs text-[#718277]">
+      <nav className="flex flex-wrap items-center gap-2 text-xs text-[#718277]">
         <Link
           href="/app/business/verifiers"
-          className="transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 transition-colors hover:text-white"
         >
+          <ShieldIcon />
           Verifiers
         </Link>
 
-        <span className="text-[#294034]">
-          /
-        </span>
+        <span className="text-[#294034]">/</span>
 
         <Link
           href="/app/business/verifiers/operations-team"
@@ -120,166 +141,174 @@ export function BusinessVerifierAssignmentsConnected() {
           Operations Team
         </Link>
 
-        <span className="text-[#294034]">
-          /
-        </span>
+        <span className="text-[#294034]">/</span>
 
-        <span className="font-medium text-white">
+        <span className="font-semibold text-[#02C763]">
           Manage assignments
         </span>
       </nav>
 
       {/* HEADER */}
-      <header className="mb-8">
-        <div className="flex flex-wrap items-center gap-3">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-white md:text-3xl">
-            Manage assignments
-          </h2>
+      <header>
+        <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
+          Manage assignments
+        </h2>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#294034] bg-[#16281E] px-2.5 py-0.5 text-xs font-medium text-[#02C763]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-            Authorised
-          </span>
-        </div>
-
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-[#A7B3AB]">
-          Choose which campaigns Operations Team is
-          authorised to verify.
+        <p className="mt-1.5 text-sm leading-6 text-[#A7B3AB]">
+          Choose which campaigns Operations Team can
+          verify activity for.
         </p>
       </header>
 
-      {/* VERIFIER CONTEXT */}
-      <section className="mb-5 flex items-center justify-between gap-4 rounded-xl border border-[#1B2A22] bg-[#0C120F] p-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#294034] bg-[#142019] text-[#02C763]">
-            <ShieldIcon />
+      {/* VERIFIER SUMMARY */}
+      <section className="rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-6">
+        <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
+
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#142019] text-[#02C763]">
+              <TeamIcon />
+            </div>
+
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#718277]">
+                Verifier
+              </span>
+
+              <p className="mt-1 font-display text-base font-semibold text-white">
+                Operations Team
+              </p>
+            </div>
           </div>
 
-          <div>
-            <p className="font-display text-base font-semibold text-white">
-              Operations Team
-            </p>
+          <div className="md:text-center">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#718277]">
+              Status
+            </span>
 
-            <p className="mt-0.5 text-xs text-[#718277]">
-              Team verifier
-            </p>
+            <div className="mt-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs font-medium text-[#02C763]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
+                Authorised
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div className="text-right">
-          <p className="font-display text-xl font-semibold text-white">
-            {assignedCount}
-          </p>
+          <div className="md:text-right">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#718277]">
+              Currently assigned
+            </span>
 
-          <p className="text-[10px] font-medium uppercase tracking-wider text-[#718277]">
-            Assigned campaigns
-          </p>
+            <div className="mt-1 flex items-baseline gap-1.5 md:justify-end">
+              <span className="font-display text-2xl font-semibold text-white">
+                {selected.length}
+              </span>
+
+              <span className="text-sm text-[#A7B3AB]">
+                campaigns
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CAMPAIGNS */}
-      <section className="overflow-hidden rounded-xl border border-[#1B2A22] bg-[#0C120F]">
-        <div className="border-b border-[#1B2A22] bg-[#101813] px-5 py-4">
-          <h3 className="font-display text-sm font-semibold text-white">
+      {/* ASSIGNMENTS */}
+      <section className="rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-6">
+
+        <div className="mb-6">
+          <h3 className="font-display text-lg font-semibold text-white">
             Campaign assignments
           </h3>
 
-          <p className="mt-1 text-xs text-[#718277]">
-            Assigned campaigns may submit qualifying
-            activity to this verifier.
+          <p className="mt-1 text-sm text-[#A7B3AB]">
+            Select the campaigns this verifier is
+            authorised to confirm activity for.
           </p>
         </div>
 
-        <div className="divide-y divide-[#1B2A22]">
+        <div className="space-y-2.5">
           {campaigns.map((campaign) => {
-            const enabled =
-              assigned[campaign.id];
+            const checked =
+              selected.includes(campaign.id);
 
             return (
-              <div
+              <label
                 key={campaign.id}
-                className="flex items-center justify-between gap-5 px-5 py-5"
+                className="flex cursor-pointer items-center justify-between gap-4 rounded-[10px] bg-[#101813] p-4 transition-colors hover:bg-[#142019]"
               >
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white">
-                    {campaign.name}
-                  </p>
+                <div className="flex min-w-0 items-center gap-4">
 
-                  <p className="mt-1 text-xs leading-5 text-[#718277]">
-                    {campaign.description}
-                  </p>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() =>
+                      toggleCampaign(campaign.id)
+                    }
+                    className="sr-only"
+                  />
+
+                  <div
+                    className={[
+                      "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] transition-colors",
+                      checked
+                        ? "bg-[#02C763] text-[#050806]"
+                        : "bg-[#272B28] text-transparent",
+                    ].join(" ")}
+                  >
+                    <CheckIcon />
+                  </div>
+
+                  <span className="truncate text-sm font-medium text-white">
+                    {campaign.name}
+                  </span>
                 </div>
 
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={enabled}
-                  onClick={() =>
-                    toggleCampaign(campaign.id)
-                  }
-                  className={[
-                    "relative h-6 w-11 shrink-0 rounded-full border transition-colors",
-                    enabled
-                      ? "border-[#02C763]/50 bg-[#02C763]"
-                      : "border-[#294034] bg-[#142019]",
-                  ].join(" ")}
-                >
-                  <span
-                    className={[
-                      "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all",
-                      enabled
-                        ? "left-[21px]"
-                        : "left-0.5",
-                    ].join(" ")}
-                  />
-                </button>
-              </div>
+                {campaign.status === "Active" ? (
+                  <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs font-medium text-[#02C763]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
+                    Active
+                  </span>
+                ) : (
+                  <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#F5B942]/10 px-2.5 py-1 text-xs font-medium text-[#F5B942]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#F5B942]" />
+                    Paused
+                  </span>
+                )}
+              </label>
             );
           })}
         </div>
-      </section>
 
-      {/* PRODUCT NOTE */}
-      <div className="mt-5 rounded-xl border border-[#1B2A22] bg-[#101813] p-4">
-        <p className="text-xs leading-5 text-[#8A938D]">
-          Removing a verifier from a campaign prevents
-          future activity from being verified by that
-          verifier. Existing verification history is not
-          affected.
-        </p>
-      </div>
+        {/* INFO */}
+        <div className="mt-6 flex items-start gap-3 rounded-[10px] bg-[#101813] p-3.5">
+          <span className="mt-0.5 shrink-0 text-[#718277]">
+            <InfoIcon />
+          </span>
 
-      {saved && (
-        <div className="mt-5 rounded-xl border border-[#294034] bg-[#142019] px-4 py-3">
-          <p className="text-sm font-medium text-[#02C763]">
-            Assignment changes saved
-          </p>
-
-          <p className="mt-1 text-xs text-[#8A938D]">
-            This confirmation is UI-only until the
-            application is connected to Core.
+          <p className="text-sm leading-6 text-[#A7B3AB]">
+            Operations Team can only verify activity for
+            campaigns they are assigned to.
           </p>
         </div>
-      )}
 
-      {/* ACTIONS */}
-      <div className="mt-7 flex items-center justify-between gap-4">
-        <Link
-          href="/app/business/verifiers/operations-team"
-          className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[#9DA8A1] transition-colors hover:text-white"
-        >
-          <ArrowLeft />
-          Back
-        </Link>
 
-        <button
-          type="button"
-          onClick={() => setSaved(true)}
-          className="rounded-[10px] bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#050806] transition-colors hover:bg-[#02D86F]"
-        >
-          Save changes
-        </button>
-      </div>
+        {/* ACTIONS */}
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-[#1B2A22] pt-5">
+
+          <Link
+            href="/app/business/verifiers/operations-team"
+            className="rounded-[10px] bg-[#101813] px-5 py-2.5 text-sm font-medium text-[#A7B3AB] transition-colors hover:bg-[#142019] hover:text-white"
+          >
+            Cancel
+          </Link>
+
+          <Link
+            href="/app/business/verifiers/operations-team/assignments/success"
+            className="inline-flex items-center gap-2 rounded-[10px] bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#050806] transition-colors hover:bg-[#02D86F]"
+          >
+            Save assignments
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
