@@ -2,6 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+import {
+  BusinessCampaignFundingReview,
+} from "@/components/business/BusinessCampaignFundingReview";
+
+import {
+  BusinessCampaignFundingStatus,
+} from "@/components/business/BusinessCampaignFundingStatus";
+
+import {
+  BusinessCampaignFundingSuccess,
+} from "@/components/business/BusinessCampaignFundingSuccess";
 
 function PlusIcon() {
   return (
@@ -101,6 +114,54 @@ const activity = [
 
 export function BusinessCampaignDetailConnected() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const searchParams = useSearchParams();
+
+  const fundingAction = searchParams.get("action");
+  const fundingStage = searchParams.get("stage");
+
+  if (
+    fundingAction === "fund" &&
+    fundingStage === "success"
+  ) {
+    return <BusinessCampaignFundingSuccess />;
+  }
+
+  if (
+    fundingAction === "fund" &&
+    fundingStage === "approval"
+  ) {
+    return (
+      <BusinessCampaignFundingStatus
+        stage="approval"
+      />
+    );
+  }
+
+  if (
+    fundingAction === "fund" &&
+    fundingStage === "processing"
+  ) {
+    return (
+      <BusinessCampaignFundingStatus
+        stage="processing"
+      />
+    );
+  }
+
+  if (
+    fundingAction === "fund" &&
+    fundingStage === "error"
+  ) {
+    return (
+      <BusinessCampaignFundingStatus
+        stage="error"
+      />
+    );
+  }
+
+  if (fundingAction === "fund") {
+    return <BusinessCampaignFundingReview />;
+  }
 
   return (
     <div className="flex w-full flex-col">

@@ -109,8 +109,29 @@ export function BusinessCreateCampaign() {
     setCreated(true);
   }
 
+  if (created) {
+
+    return (
+
+      <BusinessCampaignCreated
+
+        name={name}
+
+        qualifyingAction={action}
+
+        reward={`${reward} USDC`}
+
+        verifier={verifier}
+
+      />
+
+    );
+
+  }
+
+
   return (
-    <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-8 pb-16">
+    <div className="mx-auto flex w-full max-w-3xl shrink-0 self-start flex-col gap-8 pb-16">
       {/* Breadcrumb + heading */}
       <div className="flex flex-col gap-2">
         <nav className="flex items-center gap-2 text-xs text-[#8A938D]">

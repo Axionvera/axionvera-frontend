@@ -306,7 +306,7 @@ function DisconnectedOverview() {
   } = useBusinessWallet();
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-1 items-center justify-center">
+    <div className="mx-auto flex min-h-full w-full max-w-7xl items-center justify-center">
       <section className="relative w-full max-w-[720px] overflow-hidden rounded-[20px] border border-[#1B2A22] bg-[#0C120F] px-6 py-10 text-center shadow-[0_24px_80px_-42px_rgba(0,0,0,0.85)] sm:px-10 sm:py-12">
         <div
           aria-hidden="true"
@@ -789,7 +789,7 @@ function DashboardShell() {
           </div>
         </div>
 
-        <main className="flex h-0 min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-[#101412] p-4 pb-10 sm:p-6 sm:pb-12 lg:p-8 lg:pb-14">
+    <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-[#101412] p-4 pb-10 sm:p-6 sm:pb-12 lg:p-8 lg:pb-14">
           {isRestoring ? (
             <RestoringWallet />
           ) : isConnected ? (

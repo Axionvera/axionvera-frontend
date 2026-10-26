@@ -789,7 +789,7 @@ function DashboardShell() {
           </div>
         </div>
 
-        <main className="flex min-h-0 flex-1 overflow-x-hidden overflow-y-scroll overscroll-contain bg-[#101412] p-4 pb-10 sm:p-6 sm:pb-12 lg:p-8 lg:pb-14">
+        <main className="flex h-0 min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-[#101412] p-4 pb-10 sm:p-6 sm:pb-12 lg:p-8 lg:pb-14">
           {isRestoring ? (
             <RestoringWallet />
           ) : isConnected ? (
