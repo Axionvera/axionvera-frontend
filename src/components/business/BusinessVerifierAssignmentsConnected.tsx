@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   campaigns as centralCampaigns,
-  getVerifier,
+  requireVerifier,
 } from "@/lib/axionveraData";
 import type {
   CampaignId,
 } from "@/types/axionvera";
 
 const operationsTeamVerifier =
-  getVerifier("operations-team");
+  requireVerifier("operations-team");
 
 if (!operationsTeamVerifier) {
   throw new Error(

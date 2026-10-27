@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
-  getVerifier,
+  requireVerifier,
   getVerifierAssignedCampaigns,
 } from "@/lib/axionveraData";
 
@@ -134,7 +134,7 @@ function ArrowLeft() {
 }
 
 const operationsTeamVerifier =
-  getVerifier("operations-team");
+  requireVerifier("operations-team");
 
 if (!operationsTeamVerifier) {
   throw new Error(

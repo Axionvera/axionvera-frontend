@@ -505,3 +505,42 @@ export function getAgentRewardSummary(
       summary.agentId === agentId
   );
 }
+
+
+/*
+ * ----------------------------------------------------------
+ * Required reads
+ * ----------------------------------------------------------
+ *
+ * Use these when a screen cannot exist without the requested
+ * domain record. They return definite types, which keeps
+ * React components free from repeated undefined checks.
+ */
+
+export function requireCampaign(
+  id: CampaignId
+): Campaign {
+  const campaign = getCampaign(id);
+
+  if (!campaign) {
+    throw new Error(
+      `Campaign "${id}" was not found.`
+    );
+  }
+
+  return campaign;
+}
+
+export function requireVerifier(
+  id: Verifier["id"]
+): Verifier {
+  const verifier = getVerifier(id);
+
+  if (!verifier) {
+    throw new Error(
+      `Verifier "${id}" was not found.`
+    );
+  }
+
+  return verifier;
+}

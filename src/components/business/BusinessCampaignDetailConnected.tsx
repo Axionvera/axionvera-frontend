@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { CURRENCY, getCampaign } from "@/lib/axionveraData";
+import { CURRENCY, requireCampaign } from "@/lib/axionveraData";
 import {
   BusinessCampaignFundingReview,
 } from "@/components/business/BusinessCampaignFundingReview";
@@ -114,7 +114,7 @@ const activity = [
 ];
 
 const merchantGrowthCampaign =
-  getCampaign("merchant-growth");
+  requireCampaign("merchant-growth");
 
 if (!merchantGrowthCampaign) {
   throw new Error(
