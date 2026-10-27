@@ -842,7 +842,15 @@ export const businessAgentDirectory =
 const operationsTeamDirectoryVerifier =
   requireVerifier("operations-team");
 
-export const businessVerifierDirectory = [
+export const businessVerifierDirectory: Array<{
+  name: string;
+  type: string;
+  status: "Authorised" | "Inactive";
+  campaigns: number;
+  pending: number;
+  verified: number;
+  href?: string;
+}> = [
   {
     name: operationsTeamDirectoryVerifier.name,
     type: "Team verifier",
@@ -850,7 +858,7 @@ export const businessVerifierDirectory = [
       operationsTeamDirectoryVerifier.status ===
       "authorised"
         ? "Authorised"
-        : "Unauthorised",
+        : "Inactive",
     campaigns:
       operationsTeamDirectoryVerifier
         .assignedCampaignIds.length,
