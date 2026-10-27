@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  CURRENCY,
+  businessActivities,
+  requireAgent,
+  requireCampaign,
+  requireVerifier,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
 import { useState } from "react";
 
@@ -101,6 +109,39 @@ function RejectIcon() {
   );
 }
 
+const reviewActivity = (() => {
+  const activity =
+    businessActivities.find(
+      (item) =>
+        item.agentId === "amina-t" &&
+        item.campaignId === "merchant-growth" &&
+        item.activity === "Merchant onboarded" &&
+        item.status === "pending"
+    );
+
+  if (!activity) {
+    throw new Error(
+      "Pending Merchant Growth activity for Amina was not found."
+    );
+  }
+
+  return activity;
+})();
+
+const reviewAgent =
+  requireAgent(reviewActivity.agentId);
+
+const reviewCampaign =
+  requireCampaign(reviewActivity.campaignId);
+
+const reviewVerifier =
+  reviewCampaign.verifierId
+    ? requireVerifier(reviewCampaign.verifierId)
+    : null;
+
+const verificationReward =
+  reviewCampaign.rewardPerVerifiedAction;
+
 export function BusinessActivityReviewConnected() {
   const [decision, setDecision] =
     useState<DecisionState>("default");
@@ -123,12 +164,12 @@ export function BusinessActivityReviewConnected() {
 
         <span className="text-[#294034]">/</span>
 
-        <span>Amina T.</span>
+        <span>{reviewAgent.name}</span>
 
         <span className="text-[#294034]">/</span>
 
         <span className="font-medium text-white">
-          Merchant onboarded
+          {reviewActivity.activity}
         </span>
       </nav>
 
@@ -184,12 +225,10 @@ export function BusinessActivityReviewConnected() {
             </span>
 
             <div className="mt-2 flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#16281E] text-xs font-semibold text-white">
-                AT
-              </div>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#16281E] text-xs font-semibold text-white">{reviewAgent.initials}</div>
 
               <span className="text-sm font-medium text-white">
-                Amina T.
+                {reviewAgent.name}
               </span>
             </div>
           </div>
@@ -200,7 +239,7 @@ export function BusinessActivityReviewConnected() {
             </span>
 
             <p className="mt-2 text-sm font-medium text-white">
-              Merchant onboarded
+              {reviewActivity.activity}
             </p>
           </div>
 
@@ -210,7 +249,7 @@ export function BusinessActivityReviewConnected() {
             </span>
 
             <p className="mt-2 text-sm font-medium text-white">
-              Merchant Growth Campaign
+              {reviewCampaign.name}
             </p>
           </div>
 
@@ -220,7 +259,7 @@ export function BusinessActivityReviewConnected() {
             </span>
 
             <p className="mt-2 text-sm text-[#A7B3AB]">
-              3h ago
+              {reviewActivity.submittedLabel}
             </p>
           </div>
 
@@ -270,7 +309,7 @@ export function BusinessActivityReviewConnected() {
             </span>
 
             <p className="mt-2 text-sm font-medium text-white">
-              Merchant onboarded
+              {reviewActivity.activity}
             </p>
           </div>
 
@@ -301,7 +340,7 @@ export function BusinessActivityReviewConnected() {
               </span>
 
               <span className="text-sm font-medium text-white">
-                Operations Team
+                {reviewVerifier?.name ?? "Not assigned"}
               </span>
             </div>
           </div>
@@ -367,13 +406,13 @@ export function BusinessActivityReviewConnected() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-[#8A938D]">
-                Merchant onboarded by{" "}
+                {reviewActivity.activity} by{" "}
                 <span className="font-medium text-white">
-                  Amina T.
+                  {reviewAgent.name}
                 </span>{" "}
                 will be marked as verified.{" "}
                 <span className="font-medium text-white">
-                  5 USDC
+                  {verificationReward} {CURRENCY}
                 </span>{" "}
                 will be allocated according to the
                 campaign reward rule.
@@ -420,7 +459,7 @@ export function BusinessActivityReviewConnected() {
                 This activity will remain unverified
                 and no reward will be allocated to{" "}
                 <span className="font-medium text-white">
-                  Amina T.
+                  {reviewAgent.name}
                 </span>
                 .
               </p>
@@ -466,7 +505,7 @@ export function BusinessActivityReviewConnected() {
               </h3>
 
               <p className="mt-1 text-sm text-[#8A938D]">
-                5 USDC allocated according to campaign
+                {verificationReward} {CURRENCY} allocated according to campaign
                 rules. Status updated.
               </p>
             </div>

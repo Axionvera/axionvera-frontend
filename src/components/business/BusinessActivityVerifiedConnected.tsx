@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  CURRENCY,
+  businessActivities,
+  requireAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+  requireVerifier,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
 
 function ArrowLeft() {
@@ -135,6 +144,58 @@ function InfoIcon() {
   );
 }
 
+const verifiedActivitySource = (() => {
+  const activity =
+    businessActivities.find(
+      (item) =>
+        item.agentId === "amina-t" &&
+        item.campaignId === "merchant-growth" &&
+        item.activity === "Merchant onboarded" &&
+        item.status === "pending"
+    );
+
+  if (!activity) {
+    throw new Error(
+      "Pending Merchant Growth activity for Amina was not found."
+    );
+  }
+
+  return activity;
+})();
+
+const verifiedAgent =
+  requireAgent(
+    verifiedActivitySource.agentId
+  );
+
+const verifiedCampaign =
+  requireCampaign(
+    verifiedActivitySource.campaignId
+  );
+
+const verifiedVerifier =
+  verifiedCampaign.verifierId
+    ? requireVerifier(
+        verifiedCampaign.verifierId
+      )
+    : null;
+
+const verifiedAgentSummary =
+  requireAgentRewardSummary("amina-t");
+
+const allocatedReward =
+  verifiedCampaign.rewardPerVerifiedAction;
+
+const claimableAfterVerification =
+  verifiedAgentSummary.claimable;
+
+const claimableBeforeVerification =
+  Math.max(
+    0,
+    claimableAfterVerification -
+      allocatedReward
+  );
+
 export function BusinessActivityVerifiedConnected() {
   return (
     <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-6 pb-16">
@@ -151,12 +212,12 @@ export function BusinessActivityVerifiedConnected() {
 
         <span className="text-[#294034]">/</span>
 
-        <span>Amina T.</span>
+        <span>{verifiedAgent.name}</span>
 
         <span className="text-[#294034]">/</span>
 
         <span className="font-medium text-white">
-          Merchant onboarded
+          {verifiedActivitySource.activity}
         </span>
       </nav>
 
@@ -180,7 +241,7 @@ export function BusinessActivityVerifiedConnected() {
             </div>
 
             <p className="mt-1.5 text-sm leading-6 text-[#A7B3AB]">
-              Merchant onboarded by Amina T. has been
+              {verifiedActivitySource.activity} by {verifiedAgent.name} has been
               verified successfully.
             </p>
           </div>
@@ -210,12 +271,10 @@ export function BusinessActivityVerifiedConnected() {
               </span>
 
               <div className="mt-2 flex items-center gap-2.5">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#16281E] text-xs font-semibold text-[#02C763]">
-                  AT
-                </div>
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#16281E] text-xs font-semibold text-[#02C763]">{verifiedAgent.initials}</div>
 
                 <span className="text-sm font-medium text-white">
-                  Amina T.
+                  {verifiedAgent.name}
                 </span>
               </div>
             </div>
@@ -226,7 +285,7 @@ export function BusinessActivityVerifiedConnected() {
               </span>
 
               <p className="mt-2 text-sm font-medium text-white">
-                Merchant onboarded
+                {verifiedActivitySource.activity}
               </p>
             </div>
 
@@ -241,7 +300,7 @@ export function BusinessActivityVerifiedConnected() {
                 </span>
 
                 <span className="text-sm font-medium text-white">
-                  Merchant Growth Campaign
+                  {verifiedCampaign.name}
                 </span>
               </div>
             </div>
@@ -266,7 +325,7 @@ export function BusinessActivityVerifiedConnected() {
               </span>
 
               <p className="mt-2 text-sm font-medium text-white">
-                Operations Team
+                {verifiedVerifier?.name ?? "Not assigned"}
               </p>
             </div>
 
@@ -324,7 +383,7 @@ export function BusinessActivityVerifiedConnected() {
               </span>
 
               <p className="mt-3 text-sm font-medium text-white">
-                Amina T.
+                {verifiedAgent.name}
               </p>
             </div>
 
@@ -334,7 +393,7 @@ export function BusinessActivityVerifiedConnected() {
               </span>
 
               <p className="mt-2 font-display text-lg font-medium text-[#A7B3AB]">
-                15 USDC
+                {claimableBeforeVerification} {CURRENCY}
               </p>
             </div>
 
@@ -344,7 +403,7 @@ export function BusinessActivityVerifiedConnected() {
               </span>
 
               <p className="mt-2 font-display text-lg font-semibold text-[#02C763]">
-                20 USDC
+                {claimableAfterVerification} {CURRENCY}
               </p>
             </div>
           </div>
@@ -357,9 +416,9 @@ export function BusinessActivityVerifiedConnected() {
             <p className="text-sm leading-5 text-[#A7B3AB]">
               The{" "}
               <strong className="font-semibold text-[#02C763]">
-                5 USDC
+                {allocatedReward} {CURRENCY}
               </strong>{" "}
-              reward is now available for Amina T. to
+              reward is now available for {verifiedAgent.name} to
               claim.
             </p>
           </div>

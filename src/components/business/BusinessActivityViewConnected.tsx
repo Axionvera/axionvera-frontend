@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  CURRENCY,
+  businessActivities,
+  requireAgent,
+  requireCampaign,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -12,34 +19,48 @@ type VerifiedActivity = {
   time: string;
 };
 
-const activities: Record<string, VerifiedActivity> = {
-  "/app/business/activity/sarah-a/merchant-onboarded": {
-    initials: "SA",
-    agent: "Sarah A.",
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    reward: "5 USDC",
-    time: "15m ago",
-  },
+const activities =
+  Object.fromEntries(
+    businessActivities
+      .filter(
+        (item) =>
+          item.status === "verified" &&
+          [
+            "sarah-a",
+            "david-k",
+            "tunde-o",
+          ].includes(item.agentId)
+      )
+      .map((item) => {
+        const agent =
+          requireAgent(item.agentId);
 
-  "/app/business/activity/david-k/customer-activated": {
-    initials: "DK",
-    agent: "David K.",
-    activity: "Customer activated",
-    campaign: "Customer Activation Campaign",
-    reward: "3 USDC",
-    time: "1h ago",
-  },
+        const campaign =
+          requireCampaign(item.campaignId);
 
-  "/app/business/activity/tunde-o/referral-converted": {
-    initials: "TO",
-    agent: "Tunde O.",
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    reward: "5 USDC",
-    time: "Yesterday",
-  },
-};
+        const activitySlug =
+          item.activity
+            .toLowerCase()
+            .replace(/\s+/g, "-");
+
+        return [
+          `/app/business/activity/${item.agentId}/${activitySlug}`,
+          {
+            initials: agent.initials,
+            agent: agent.name,
+            activity: item.activity,
+            campaign: campaign.name,
+
+            // Historical reward snapshot.
+            // Never recompute from current campaign rules.
+            reward:
+              `${item.rewardAmount ?? 0} ${CURRENCY}`,
+
+            time: item.submittedLabel,
+          },
+        ];
+      })
+  ) as Record<string, VerifiedActivity>;
 
 function ArrowLeft() {
   return (
