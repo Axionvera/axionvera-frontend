@@ -1,6 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import {
+  CURRENCY,
+  getClaimableRewardBreakdownForAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+} from "@/lib/axionveraData";
 
 function ArrowLeft() {
   return (
@@ -117,6 +123,41 @@ function ReferralIcon() {
 }
 
 export function AgentClaimReviewConnected() {
+  const summary =
+    requireAgentRewardSummary("amina-t");
+
+  const claimableBreakdown =
+    getClaimableRewardBreakdownForAgent(
+      "amina-t"
+    );
+
+  const merchantCampaign =
+    requireCampaign("merchant-growth");
+
+  const referralCampaign =
+    requireCampaign("referral-growth");
+
+  const merchantClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "merchant-growth"
+    )?.amount ?? 0;
+
+  const referralClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "referral-growth"
+    )?.amount ?? 0;
+
+  const claimAmount =
+    summary.claimable;
+
+  const balanceAfterClaim =
+    Math.max(
+      0,
+      summary.claimable - claimAmount
+    );
+
   return (
     <div className="mx-auto w-full max-w-2xl pb-16">
 
@@ -167,9 +208,7 @@ export function AgentClaimReviewConnected() {
               Claim amount
             </span>
 
-            <p className="mt-1 font-display text-lg font-bold text-[#02C763]">
-              20 USDC
-            </p>
+            <p className="mt-1 font-display text-lg font-bold text-[#02C763]">{`${claimAmount} ${CURRENCY}`}</p>
           </div>
 
           <div>
@@ -177,9 +216,7 @@ export function AgentClaimReviewConnected() {
               Current claimable balance
             </span>
 
-            <p className="mt-1 font-display text-lg font-medium text-white">
-              20 USDC
-            </p>
+            <p className="mt-1 font-display text-lg font-medium text-white">{`${summary.claimable} ${CURRENCY}`}</p>
           </div>
 
           <div>
@@ -187,9 +224,7 @@ export function AgentClaimReviewConnected() {
               Balance after claim
             </span>
 
-            <p className="mt-1 font-display text-lg font-medium text-[#718277]">
-              0 USDC
-            </p>
+            <p className="mt-1 font-display text-lg font-medium text-[#718277]">{`${balanceAfterClaim} ${CURRENCY}`}</p>
           </div>
         </div>
 
@@ -210,12 +245,12 @@ export function AgentClaimReviewConnected() {
                 </div>
 
                 <span className="truncate text-sm font-medium text-white">
-                  Merchant Growth Campaign
+                  {merchantCampaign.name}
                 </span>
               </div>
 
               <span className="shrink-0 text-sm font-semibold text-white">
-                15 USDC
+                {merchantClaimable} {CURRENCY}
               </span>
             </div>
 
@@ -226,12 +261,12 @@ export function AgentClaimReviewConnected() {
                 </div>
 
                 <span className="truncate text-sm font-medium text-white">
-                  Referral Growth Campaign
+                  {referralCampaign.name}
                 </span>
               </div>
 
               <span className="shrink-0 text-sm font-semibold text-white">
-                5 USDC
+                {referralClaimable} {CURRENCY}
               </span>
             </div>
 
@@ -241,7 +276,7 @@ export function AgentClaimReviewConnected() {
               </span>
 
               <span className="font-display text-lg font-bold text-white">
-                20 USDC
+                {claimAmount} {CURRENCY}
               </span>
             </div>
           </div>
@@ -293,7 +328,7 @@ export function AgentClaimReviewConnected() {
             href="/app/agent/rewards/claim/approval"
             className="inline-flex items-center gap-2 rounded-[10px] bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#050806] transition-colors hover:bg-[#02D86F]"
           >
-            Claim 20 USDC
+            Claim {claimAmount} {CURRENCY}
             <ArrowRight />
           </Link>
         </div>
