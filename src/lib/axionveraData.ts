@@ -739,3 +739,141 @@ export function requireAgentRewardSummary(
 
   return summary;
 }
+
+/**
+ * Business directory projections.
+ *
+ * Canonical identities come from the shared Agent and
+ * Verifier records.
+ *
+ * Amina's Business-facing activity/reward figures derive
+ * from her canonical Agent summary so both workspaces stay
+ * consistent.
+ */
+
+const aminaDirectorySummary =
+  requireAgentRewardSummary("amina-t");
+
+const aminaDirectoryCampaignCount =
+  new Set(
+    getActivitiesForAgent("amina-t").map(
+      (activity) => activity.campaignId
+    )
+  ).size;
+
+const businessAgentDirectoryStats: Array<{
+  agentId: Agent["id"];
+  status: "Active";
+  campaigns: number;
+  verified: number;
+  pending: number;
+  claimable: number;
+  lastActivity: string;
+}> = [
+  {
+    agentId: "sarah-a",
+    status: "Active",
+    campaigns: 2,
+    verified: 18,
+    pending: 0,
+    claimable: 25,
+    lastActivity: "15m ago",
+  },
+  {
+    agentId: "david-k",
+    status: "Active",
+    campaigns: 2,
+    verified: 14,
+    pending: 0,
+    claimable: 18,
+    lastActivity: "1h ago",
+  },
+  {
+    agentId: "amina-t",
+    status: "Active",
+    campaigns: aminaDirectoryCampaignCount,
+    verified:
+      aminaDirectorySummary.verifiedActivity,
+    pending:
+      aminaDirectorySummary.pendingActivity,
+    claimable:
+      aminaDirectorySummary.claimable,
+    lastActivity: "3h ago",
+  },
+  {
+    agentId: "tunde-o",
+    status: "Active",
+    campaigns: 2,
+    verified: 12,
+    pending: 0,
+    claimable: 20,
+    lastActivity: "Yesterday",
+  },
+  {
+    agentId: "fatima-r",
+    status: "Active",
+    campaigns: 1,
+    verified: 7,
+    pending: 1,
+    claimable: 10,
+    lastActivity: "Yesterday",
+  },
+];
+
+export const businessAgentDirectory =
+  businessAgentDirectoryStats.map(
+    (stats) => {
+      const agent =
+        requireAgent(stats.agentId);
+
+      return {
+        initials: agent.initials,
+        name: agent.name,
+        status: stats.status,
+        campaigns: stats.campaigns,
+        verified: stats.verified,
+        pending: stats.pending,
+        claimable: stats.claimable,
+        lastActivity: stats.lastActivity,
+      };
+    }
+  );
+
+const operationsTeamDirectoryVerifier =
+  requireVerifier("operations-team");
+
+export const businessVerifierDirectory = [
+  {
+    name: operationsTeamDirectoryVerifier.name,
+    type: "Team verifier",
+    status:
+      operationsTeamDirectoryVerifier.status ===
+      "authorised"
+        ? "Authorised"
+        : "Unauthorised",
+    campaigns:
+      operationsTeamDirectoryVerifier
+        .assignedCampaignIds.length,
+    pending: 3,
+    verified: 42,
+    href:
+      `/app/business/verifiers/${operationsTeamDirectoryVerifier.slug}`,
+  },
+  {
+    name: "Backend / API Verifier",
+    type: "API verifier",
+    status: "Authorised",
+    campaigns: 1,
+    pending: 2,
+    verified: 21,
+  },
+  {
+    name: "Merchant Review Team",
+    type: "Team verifier",
+    status: "Inactive",
+    campaigns: 0,
+    pending: 0,
+    verified: 8,
+  },
+];
+

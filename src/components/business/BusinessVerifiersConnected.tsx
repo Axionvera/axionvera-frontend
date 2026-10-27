@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  businessVerifierDirectory,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -13,33 +17,8 @@ type Verifier = {
   href?: string;
 };
 
-const verifierRows: Verifier[] = [
-  {
-    name: "Operations Team",
-    type: "Team verifier",
-    status: "Authorised",
-    campaigns: 2,
-    pending: 3,
-    verified: 42,
-    href: "/app/business/verifiers/operations-team",
-  },
-  {
-    name: "Backend / API Verifier",
-    type: "API verifier",
-    status: "Authorised",
-    campaigns: 1,
-    pending: 2,
-    verified: 21,
-  },
-  {
-    name: "Merchant Review Team",
-    type: "Team verifier",
-    status: "Inactive",
-    campaigns: 0,
-    pending: 0,
-    verified: 8,
-  },
-];
+const verifierRows: Verifier[] =
+  businessVerifierDirectory;
 
 function SearchIcon() {
   return (

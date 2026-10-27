@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  businessAgentDirectory,
+} from "@/lib/axionveraData";
+
 import { useMemo, useState } from "react";
 
 type Agent = {
@@ -13,58 +17,8 @@ type Agent = {
   lastActivity: string;
 };
 
-const agents: Agent[] = [
-  {
-    initials: "SA",
-    name: "Sarah A.",
-    status: "Active",
-    campaigns: 2,
-    verified: 18,
-    pending: 0,
-    claimable: 25,
-    lastActivity: "15m ago",
-  },
-  {
-    initials: "DK",
-    name: "David K.",
-    status: "Active",
-    campaigns: 2,
-    verified: 14,
-    pending: 0,
-    claimable: 18,
-    lastActivity: "1h ago",
-  },
-  {
-    initials: "AT",
-    name: "Amina T.",
-    status: "Active",
-    campaigns: 1,
-    verified: 9,
-    pending: 1,
-    claimable: 15,
-    lastActivity: "3h ago",
-  },
-  {
-    initials: "TO",
-    name: "Tunde O.",
-    status: "Active",
-    campaigns: 2,
-    verified: 12,
-    pending: 0,
-    claimable: 20,
-    lastActivity: "Yesterday",
-  },
-  {
-    initials: "FR",
-    name: "Fatima R.",
-    status: "Active",
-    campaigns: 1,
-    verified: 7,
-    pending: 1,
-    claimable: 10,
-    lastActivity: "Yesterday",
-  },
-];
+const agents: Agent[] =
+  businessAgentDirectory;
 
 function SearchIcon() {
   return (
