@@ -1,6 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import {
+  CURRENCY,
+  getClaimableRewardBreakdownForAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+} from "@/lib/axionveraData";
 
 function CheckIcon() {
   return (
@@ -58,6 +64,44 @@ function ArrowRight() {
 }
 
 export function AgentClaimSuccessConnected() {
+  const summary =
+    requireAgentRewardSummary("amina-t");
+
+  const claimableBreakdown =
+    getClaimableRewardBreakdownForAgent(
+      "amina-t"
+    );
+
+  const merchantCampaign =
+    requireCampaign("merchant-growth");
+
+  const referralCampaign =
+    requireCampaign("referral-growth");
+
+  const merchantClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "merchant-growth"
+    )?.amount ?? 0;
+
+  const referralClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "referral-growth"
+    )?.amount ?? 0;
+
+  const claimAmount =
+    summary.claimable;
+
+  const postClaimClaimable =
+    Math.max(
+      0,
+      summary.claimable - claimAmount
+    );
+
+  const postClaimClaimed =
+    summary.claimed + claimAmount;
+
   return (
     <div className="mx-auto flex w-full max-w-[620px] flex-col gap-6 pb-16">
 
@@ -98,7 +142,7 @@ export function AgentClaimSuccessConnected() {
               </h2>
 
               <p className="mt-1 text-sm text-[#A7B3AB]">
-                20 USDC has been claimed successfully.
+                {claimAmount} {CURRENCY} has been claimed successfully.
               </p>
             </div>
           </div>
@@ -121,9 +165,7 @@ export function AgentClaimSuccessConnected() {
                 Claimed amount
               </span>
 
-              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-[#02C763]">
-                20 USDC
-              </p>
+              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-[#02C763]">{`${claimAmount} ${CURRENCY}`}</p>
             </div>
 
             <div>
@@ -131,9 +173,7 @@ export function AgentClaimSuccessConnected() {
                 Claimable balance
               </span>
 
-              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-white">
-                0 USDC
-              </p>
+              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-white">{`${postClaimClaimable} ${CURRENCY}`}</p>
             </div>
 
             <div>
@@ -141,9 +181,7 @@ export function AgentClaimSuccessConnected() {
                 Total earned
               </span>
 
-              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-white">
-                45 USDC
-              </p>
+              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-white">{`${summary.totalEarned} ${CURRENCY}`}</p>
             </div>
 
             <div>
@@ -151,9 +189,7 @@ export function AgentClaimSuccessConnected() {
                 Total claimed
               </span>
 
-              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-white">
-                45 USDC
-              </p>
+              <p className="mt-1 font-mono text-lg font-semibold tracking-tight text-white">{`${postClaimClaimed} ${CURRENCY}`}</p>
             </div>
           </div>
         </div>
@@ -174,11 +210,11 @@ export function AgentClaimSuccessConnected() {
 
             <div className="flex items-center justify-between gap-4 px-4 py-3">
               <span className="text-sm font-medium text-white">
-                Merchant Growth Campaign
+                {merchantCampaign.name}
               </span>
 
               <span className="font-mono text-sm font-semibold text-white">
-                15 USDC
+                {merchantClaimable} {CURRENCY}
               </span>
             </div>
 
@@ -186,11 +222,11 @@ export function AgentClaimSuccessConnected() {
 
             <div className="flex items-center justify-between gap-4 px-4 py-3">
               <span className="text-sm font-medium text-white">
-                Referral Growth Campaign
+                {referralCampaign.name}
               </span>
 
               <span className="font-mono text-sm font-semibold text-white">
-                5 USDC
+                {referralClaimable} {CURRENCY}
               </span>
             </div>
 
@@ -202,7 +238,7 @@ export function AgentClaimSuccessConnected() {
               </span>
 
               <span className="font-mono text-sm font-bold text-[#02C763]">
-                20 USDC
+                {claimAmount} {CURRENCY}
               </span>
             </div>
           </div>
