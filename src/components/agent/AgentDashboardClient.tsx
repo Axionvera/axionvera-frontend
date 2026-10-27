@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  requireAgent,
+} from "@/lib/axionveraData";
+
 import { useDashboardMotion } from "@/hooks/useDashboardMotion";
 
 import Image from "next/image";
@@ -37,6 +41,9 @@ import {
 import {
   AgentClaimSuccessConnected,
 } from "@/components/agent/AgentClaimSuccessConnected";
+
+const dashboardAgent =
+  requireAgent("amina-t");
 
 function OverviewIcon() {
   return (
@@ -221,18 +228,16 @@ export function AgentDashboardClient() {
 
           {/* AGENT */}
           <div className="flex items-center gap-2.5 rounded-[10px] border border-[#1B2A22] bg-[#101813] p-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#294034] bg-[#142019] text-xs font-semibold text-[#02C763]">
-              AT
-            </div>
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#294034] bg-[#142019] text-xs font-semibold text-[#02C763]">{dashboardAgent.initials}</div>
 
             <div className="min-w-0">
               <p className="truncate text-xs font-semibold text-white">
-                Amina T.
+                {dashboardAgent.name}
               </p>
 
               <div className="mt-0.5 flex items-center gap-1.5">
                 <span className="font-mono text-[10px] text-[#9DA8A1]">
-                  GBXE7...AELC
+                  {dashboardAgent.walletAddressShort}
                 </span>
 
                 <span className="text-[10px] font-medium text-[#02C763]">
