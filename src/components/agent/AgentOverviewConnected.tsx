@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {
   CURRENCY,
+  getActivitiesForAgent,
   requireAgent,
   requireAgentRewardSummary,
   requireCampaign,
@@ -80,6 +81,15 @@ export function AgentOverviewConnected() {
 
   const firstName =
     agent.name.split(" ")[0];
+
+  const recentActivities =
+    getActivitiesForAgent("amina-t")
+      .slice(0, 3)
+      .map((item) => ({
+        ...item,
+        campaign:
+          requireCampaign(item.campaignId),
+      }));
 
   return (
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8 pb-16">
@@ -194,78 +204,58 @@ export function AgentOverviewConnected() {
             </div>
 
             <div className="divide-y divide-[#1B2A22]">
+              {recentActivities.map((item, index) => {
+                const verified =
+                  item.status === "verified";
 
-              {/* VERIFIED */}
-              <div className="flex items-center justify-between gap-4 py-4 first:pt-1">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-medium text-white">
-                      Merchant onboarded
-                    </p>
+                return (
+                  <div
+                    key={item.id}
+                    className={[
+                      "flex items-center justify-between gap-4 py-4",
+                      index === 0
+                        ? "first:pt-1"
+                        : "",
+                    ].join(" ")}
+                  >
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-medium text-white">
+                          {item.activity}
+                        </p>
 
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2 py-0.5 text-[11px] font-medium text-[#02C763]">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-                      Verified
-                    </span>
+                        {verified ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2 py-0.5 text-[11px] font-medium text-[#02C763]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
+                            Verified
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F5B942]/10 px-2 py-0.5 text-[11px] font-medium text-[#F5B942]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#F5B942]" />
+                            Pending verification
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="mt-1 text-xs text-[#718277]">
+                        {item.campaign.name} ·{" "}
+                        {item.submittedLabel}
+                      </p>
+                    </div>
+
+                    {verified &&
+                    item.rewardAmount != null ? (
+                      <span className="shrink-0 text-sm font-semibold text-[#02C763]">
+                        +{item.rewardAmount} {CURRENCY}
+                      </span>
+                    ) : (
+                      <span className="shrink-0 text-xs text-[#718277]">
+                        Reward pending
+                      </span>
+                    )}
                   </div>
-
-                  <p className="mt-1 text-xs text-[#718277]">
-                    Merchant Growth Campaign · Just now
-                  </p>
-                </div>
-
-                <span className="shrink-0 text-sm font-semibold text-[#02C763]">
-                  +5 USDC
-                </span>
-              </div>
-
-              {/* PENDING */}
-              <div className="flex items-center justify-between gap-4 py-4">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-medium text-white">
-                      Merchant onboarded
-                    </p>
-
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F5B942]/10 px-2 py-0.5 text-[11px] font-medium text-[#F5B942]">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#F5B942]" />
-                      Pending verification
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-xs text-[#718277]">
-                    Merchant Growth Campaign · 3h ago
-                  </p>
-                </div>
-
-                <span className="shrink-0 text-xs text-[#718277]">
-                  Reward pending
-                </span>
-              </div>
-
-              {/* VERIFIED */}
-              <div className="flex items-center justify-between gap-4 py-4 last:pb-1">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-medium text-white">
-                      Merchant onboarded
-                    </p>
-
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2 py-0.5 text-[11px] font-medium text-[#02C763]">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-                      Verified
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-xs text-[#718277]">
-                    Merchant Growth Campaign · Yesterday
-                  </p>
-                </div>
-
-                <span className="shrink-0 text-sm font-semibold text-[#02C763]">
-                  +5 USDC
-                </span>
-              </div>
+                );
+              })}
             </div>
           </section>
 
