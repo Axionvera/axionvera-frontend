@@ -2,35 +2,33 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import {
+  campaigns as centralCampaigns,
+  getVerifier,
+} from "@/lib/axionveraData";
+import type {
+  CampaignId,
+} from "@/types/axionvera";
 
-type Campaign = {
-  id: string;
-  name: string;
-  status: "Active" | "Paused";
-};
+const operationsTeamVerifier =
+  getVerifier("operations-team");
 
-const campaigns: Campaign[] = [
-  {
-    id: "merchant-growth",
-    name: "Merchant Growth Campaign",
-    status: "Active",
-  },
-  {
-    id: "customer-activation",
-    name: "Customer Activation Campaign",
-    status: "Active",
-  },
-  {
-    id: "referral-growth",
-    name: "Referral Growth Campaign",
-    status: "Active",
-  },
-  {
-    id: "retail-expansion",
-    name: "Retail Expansion Campaign",
-    status: "Paused",
-  },
-];
+if (!operationsTeamVerifier) {
+  throw new Error(
+    "Operations Team verifier data is missing."
+  );
+}
+
+const campaigns = centralCampaigns.map(
+  (campaign) => ({
+    id: campaign.id,
+    name: campaign.name,
+    status:
+      campaign.status === "active"
+        ? ("Active" as const)
+        : ("Paused" as const),
+  })
+);
 
 function ShieldIcon() {
   return (
@@ -106,12 +104,12 @@ function InfoIcon() {
 }
 
 export function BusinessVerifierAssignmentsConnected() {
-  const [selected, setSelected] = useState<string[]>([
-    "merchant-growth",
-    "customer-activation",
-  ]);
+  const [selected, setSelected] =
+    useState<CampaignId[]>([
+      ...operationsTeamVerifier.assignedCampaignIds,
+    ]);
 
-  function toggleCampaign(id: string) {
+  function toggleCampaign(id: CampaignId) {
     setSelected((current) =>
       current.includes(id)
         ? current.filter((item) => item !== id)
@@ -137,9 +135,7 @@ export function BusinessVerifierAssignmentsConnected() {
         <Link
           href="/app/business/verifiers/operations-team"
           className="transition-colors hover:text-white"
-        >
-          Operations Team
-        </Link>
+        >{operationsTeamVerifier.name}</Link>
 
         <span className="text-[#294034]">/</span>
 
@@ -155,8 +151,9 @@ export function BusinessVerifierAssignmentsConnected() {
         </h2>
 
         <p className="mt-1.5 text-sm leading-6 text-[#A7B3AB]">
-          Choose which campaigns Operations Team can
-          verify activity for.
+          Choose which campaigns{" "}
+          {operationsTeamVerifier.name} can verify activity
+          for.
         </p>
       </header>
 
@@ -174,9 +171,7 @@ export function BusinessVerifierAssignmentsConnected() {
                 Verifier
               </span>
 
-              <p className="mt-1 font-display text-base font-semibold text-white">
-                Operations Team
-              </p>
+              <p className="mt-1 font-display text-base font-semibold text-white">{operationsTeamVerifier.name}</p>
             </div>
           </div>
 
@@ -187,9 +182,9 @@ export function BusinessVerifierAssignmentsConnected() {
 
             <div className="mt-1.5">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs font-medium text-[#02C763]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-                Authorised
-              </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{operationsTeamVerifier.status === "authorised"
+      ? "Authorised"
+      : operationsTeamVerifier.status}</span>
             </div>
           </div>
 
@@ -285,8 +280,8 @@ export function BusinessVerifierAssignmentsConnected() {
           </span>
 
           <p className="text-sm leading-6 text-[#A7B3AB]">
-            Operations Team can only verify activity for
-            campaigns they are assigned to.
+            {operationsTeamVerifier.name} can only verify activity
+            for campaigns they are assigned to.
           </p>
         </div>
 

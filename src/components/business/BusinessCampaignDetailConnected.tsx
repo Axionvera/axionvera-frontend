@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { CURRENCY, getCampaign } from "@/lib/axionveraData";
 import {
   BusinessCampaignFundingReview,
 } from "@/components/business/BusinessCampaignFundingReview";
@@ -112,14 +113,27 @@ const activity = [
   },
 ];
 
+const merchantGrowthCampaign =
+  getCampaign("merchant-growth");
+
+if (!merchantGrowthCampaign) {
+  throw new Error(
+    "Merchant Growth Campaign data is missing."
+  );
+}
+
 export function BusinessCampaignDetailConnected() {
+  const campaign = merchantGrowthCampaign;
+
 
 
   const [pauseCampaignOpen, setPauseCampaignOpen] =
     useState(false);
 
   const [campaignPaused, setCampaignPaused] =
-    useState(false);
+    useState(
+      campaign.status === "paused"
+    );
 
   const [resumeCampaignOpen, setResumeCampaignOpen] =
     useState(false);
@@ -286,15 +300,11 @@ export function BusinessCampaignDetailConnected() {
 
             <span className="text-[#294034]">/</span>
 
-            <span className="truncate text-[#9DA8A1]">
-              Merchant Growth Campaign
-            </span>
+            <span className="truncate text-[#9DA8A1]">{campaign.name}</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-white md:text-3xl">
-              Merchant Growth Campaign
-            </h2>
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-white md:text-3xl">{campaign.name}</h2>
 
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[#02C763]/25 bg-[#02C763]/10 px-2.5 py-0.5 text-xs font-medium text-[#02C763]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
@@ -302,9 +312,7 @@ export function BusinessCampaignDetailConnected() {
           </span>
           </div>
 
-          <p className="mt-2 text-sm text-[#718277]">
-            Reward agents for verified merchant onboarding.
-          </p>
+          <p className="mt-2 text-sm text-[#718277]">{campaign.description}</p>
 
         {campaignPaused && (
           <div className="mt-3 flex max-w-2xl items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3.5 py-3">
@@ -398,10 +406,26 @@ export function BusinessCampaignDetailConnected() {
       {/* SUMMARY */}
       <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          ["Campaign funds", "1,000 USDC", false],
-          ["Allocated rewards", "325 USDC", false],
-          ["Available funds", "675 USDC", true],
-          ["Agents", "24", false],
+          [
+            "Campaign funds",
+            `${campaign.fundedAmount.toLocaleString()} ${CURRENCY}`,
+            false,
+          ],
+          [
+            "Allocated rewards",
+            `${campaign.allocatedRewards.toLocaleString()} ${CURRENCY}`,
+            false,
+          ],
+          [
+            "Available funds",
+            `${campaign.availableFunds.toLocaleString()} ${CURRENCY}`,
+            true,
+          ],
+          [
+            "Agents",
+            String(campaign.activeAgents),
+            false,
+          ],
         ].map(([label, value, accent]) => (
           <div
             key={String(label)}
@@ -430,27 +454,23 @@ export function BusinessCampaignDetailConnected() {
             <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[#718277]">
               Qualifying action
             </span>
-            <span className="text-sm font-medium text-white">
-              Merchant onboarded
-            </span>
+            <span className="text-sm font-medium text-white">{campaign.qualifyingAction}</span>
           </div>
 
           <div>
             <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[#718277]">
               Reward per verified action
             </span>
-            <span className="text-sm font-medium text-white">
-              5 USDC
-            </span>
+            <span className="text-sm font-medium text-white">{`${campaign.rewardPerVerifiedAction} ${CURRENCY}`}</span>
           </div>
 
           <div>
             <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[#718277]">
               Verifier
             </span>
-            <span className="text-sm font-medium text-white">
-              Operations Team
-            </span>
+            <span className="text-sm font-medium text-white">{campaign.verifierId === "operations-team"
+      ? "Operations Team"
+      : "Not assigned"}</span>
           </div>
 
           <div>
@@ -608,9 +628,7 @@ export function BusinessCampaignDetailConnected() {
                   <span className="h-1.5 w-1.5 rounded-full bg-[#718277]" />
                   Available
                 </span>
-                <span className="text-sm font-semibold text-white">
-                  675 USDC
-                </span>
+                <span className="text-sm font-semibold text-white">{`${campaign.availableFunds.toLocaleString()} ${CURRENCY}`}</span>
               </div>
             </div>
 
@@ -701,7 +719,7 @@ export function BusinessCampaignDetailConnected() {
             </h2>
 
             <p className="mt-2 text-sm leading-relaxed text-[#9DA8A1]">
-              Pausing Merchant Growth Campaign will stop
+              Pausing {campaign.name} will stop
               new reward allocations until the campaign
               is resumed.
             </p>
@@ -734,9 +752,7 @@ export function BusinessCampaignDetailConnected() {
                   Campaign
                 </span>
 
-                <span className="text-right font-medium text-white">
-                  Merchant Growth Campaign
-                </span>
+                <span className="text-right font-medium text-white">{campaign.name}</span>
               </div>
 
               <div className="flex items-center justify-between gap-4">
@@ -755,9 +771,7 @@ export function BusinessCampaignDetailConnected() {
                   Available funds
                 </span>
 
-                <span className="font-semibold text-white">
-                  675 USDC
-                </span>
+                <span className="font-semibold text-white">{`${campaign.availableFunds.toLocaleString()} ${CURRENCY}`}</span>
               </div>
             </div>
 
@@ -831,7 +845,7 @@ export function BusinessCampaignDetailConnected() {
             </h2>
 
             <p className="mt-2 text-sm leading-relaxed text-[#9DA8A1]">
-              Resuming Merchant Growth Campaign will allow
+              Resuming {campaign.name} will allow
               new verified qualifying activity to allocate
               rewards again.
             </p>
@@ -869,9 +883,7 @@ export function BusinessCampaignDetailConnected() {
                   Campaign
                 </span>
 
-                <span className="font-medium text-white">
-                  Merchant Growth Campaign
-                </span>
+                <span className="font-medium text-white">{campaign.name}</span>
               </div>
 
               <div className="flex items-center justify-between gap-4">
@@ -890,9 +902,7 @@ export function BusinessCampaignDetailConnected() {
                   Available funds
                 </span>
 
-                <span className="font-semibold text-white">
-                  675 USDC
-                </span>
+                <span className="font-semibold text-white">{`${campaign.availableFunds.toLocaleString()} ${CURRENCY}`}</span>
               </div>
             </div>
 
