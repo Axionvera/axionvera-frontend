@@ -55,6 +55,8 @@ const activities: Activity[] =
 const activitySummary =
   requireAgentRewardSummary("amina-t");
 
+const PAGE_SIZE = 5;
+
 function SearchIcon() {
   return (
     <svg
