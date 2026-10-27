@@ -632,3 +632,19 @@ export function requireAgent(
 
   return agent;
 }
+
+
+export function requireAgentRewardSummary(
+  agentId: Agent["id"]
+): AgentRewardSummary {
+  const summary =
+    getAgentRewardSummary(agentId);
+
+  if (!summary) {
+    throw new Error(
+      `Reward summary for agent "${agentId}" was not found.`
+    );
+  }
+
+  return summary;
+}

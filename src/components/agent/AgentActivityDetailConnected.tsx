@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import {
+  getActivitiesForAgent,
+  requireCampaign,
+} from "@/lib/axionveraData";
 type ActivityDetail = {
   activity: string;
   campaign: string;
@@ -11,148 +15,26 @@ type ActivityDetail = {
   reward: number;
 };
 
-const activityDetails: Record<number, ActivityDetail> = {
-  1: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "15m ago",
-    status: "verified",
-    reward: 5,
-  },
-  2: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "3h ago",
-    status: "verified",
-    reward: 5,
-  },
-  3: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "Yesterday",
-    status: "pending",
-    reward: 5,
-  },
-  4: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "2 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  5: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "3 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  6: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "4 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  7: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "5 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  8: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "6 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  9: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "1 week ago",
-    status: "verified",
-    reward: 5,
-  },
-  10: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "1 week ago",
-    status: "verified",
-    reward: 5,
-  },
-  11: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "8 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  12: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "9 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  13: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "10 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  14: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "11 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  15: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "12 days ago",
-    status: "verified",
-    reward: 5,
-  },
-  16: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "13 days ago",
-    status: "pending",
-    reward: 5,
-  },
-  17: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "2 weeks ago",
-    status: "verified",
-    reward: 5,
-  },
-  18: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "2 weeks ago",
-    status: "verified",
-    reward: 5,
-  },
-  19: {
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    submitted: "3 weeks ago",
-    status: "verified",
-    reward: 5,
-  },
-  20: {
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    submitted: "3 weeks ago",
-    status: "verified",
-    reward: 5,
-  },
-};
+const activityDetails =
+  Object.fromEntries(
+    getActivitiesForAgent("amina-t").map(
+      (item, index) => {
+        const campaign =
+          requireCampaign(item.campaignId);
+
+        return [
+          index + 1,
+          {
+            activity: item.activity,
+            campaign: campaign.name,
+            submitted: item.submittedLabel,
+            status: item.status,
+            reward: item.rewardAmount ?? 0,
+          },
+        ];
+      }
+    )
+  ) as Record<number, ActivityDetail>;
 
 function ArrowLeft() {
   return (

@@ -7,6 +7,11 @@ import {
   useMemo,
   useState,
 } from "react";
+import {
+  getActivitiesForAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+} from "@/lib/axionveraData";
 
 type ActivityStatus =
   | "verified"
@@ -26,190 +31,29 @@ type Activity = {
   time: string;
 };
 
-const activities: Activity[] = [
-  {
-    id: 1,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "15m ago",
-  },
-  {
-    id: 2,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "3h ago",
-  },
-  {
-    id: 3,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "pending",
-    reward: null,
-    time: "Yesterday",
-  },
-  {
-    id: 4,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "2 days ago",
-  },
-  {
-    id: 5,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "3 days ago",
-  },
-  {
-    id: 6,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "4 days ago",
-  },
-  {
-    id: 7,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "5 days ago",
-  },
-  {
-    id: 8,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "6 days ago",
-  },
-  {
-    id: 9,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "1 week ago",
-  },
-  {
-    id: 10,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "1 week ago",
-  },
-  {
-    id: 11,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "8 days ago",
-  },
-  {
-    id: 12,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "9 days ago",
-  },
-  {
-    id: 13,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "10 days ago",
-  },
-  {
-    id: 14,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "11 days ago",
-  },
-  {
-    id: 15,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "12 days ago",
-  },
-  {
-    id: 16,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "pending",
-    reward: null,
-    time: "13 days ago",
-  },
-  {
-    id: 17,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "2 weeks ago",
-  },
-  {
-    id: 18,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "2 weeks ago",
-  },
-  {
-    id: 19,
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    campaignType: "referral",
-    status: "verified",
-    reward: 5,
-    time: "3 weeks ago",
-  },
-  {
-    id: 20,
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    campaignType: "merchant",
-    status: "verified",
-    reward: 5,
-    time: "3 weeks ago",
-  },
-];
+const activities: Activity[] =
+  getActivitiesForAgent("amina-t").map(
+    (item, index) => {
+      const campaign =
+        requireCampaign(item.campaignId);
 
-const PAGE_SIZE = 5;
+      return {
+        id: index + 1,
+        activity: item.activity,
+        campaign: campaign.name,
+        campaignType:
+          item.campaignId === "referral-growth"
+            ? "referral"
+            : "merchant",
+        status: item.status,
+        reward: item.rewardAmount,
+        time: item.submittedLabel,
+      };
+    }
+  );
+
+const activitySummary =
+  requireAgentRewardSummary("amina-t");
 
 function SearchIcon() {
   return (
@@ -409,9 +253,7 @@ export function AgentActivityConnected() {
             Total activity
           </span>
 
-          <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-white">
-            20
-          </p>
+          <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-white">{activitySummary.totalActivity}</p>
         </div>
 
         <div className="rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-5">
@@ -423,9 +265,7 @@ export function AgentActivityConnected() {
             <span className="h-2 w-2 rounded-full bg-[#02C763]" />
           </div>
 
-          <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#02C763]">
-            18
-          </p>
+          <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#02C763]">{activitySummary.verifiedActivity}</p>
         </div>
 
         <div className="rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-5">
@@ -437,9 +277,7 @@ export function AgentActivityConnected() {
             <span className="h-2 w-2 rounded-full bg-[#F5B942]" />
           </div>
 
-          <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#F5B942]">
-            2
-          </p>
+          <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#F5B942]">{activitySummary.pendingActivity}</p>
         </div>
       </section>
 
