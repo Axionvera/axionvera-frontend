@@ -16,7 +16,8 @@ export type AgentId =
   | "amina-t"
   | "sarah-a"
   | "david-k"
-  | "tunde-o";
+  | "tunde-o"
+  | "fatima-r";
 
 export type VerifierId =
   | "operations-team";

@@ -2,70 +2,64 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import {
+  CURRENCY,
+  businessActivities,
+  businessActivitySummary,
+  requireAgent,
+  requireCampaign,
+} from "@/lib/axionveraData";
+import type {
+  ActivityStatus,
+} from "@/types/axionvera";
 
-type ActivityStatus = "verified" | "pending";
+function activitySlug(
+  activity: string
+) {
+  return activity
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
 
-type ActivityRow = {
-  initials: string;
-  agent: string;
-  activity: string;
-  campaign: string;
-  status: ActivityStatus;
-  reward: string | null;
-  time: string;
-  href?: string;
-};
+const rows = businessActivities.map(
+  (item) => {
+    const agent =
+      requireAgent(item.agentId);
 
-const rows: ActivityRow[] = [
-  {
-    initials: "SA",
-    agent: "Sarah A.",
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    status: "verified",
-    reward: "+5 USDC",
-    time: "15m ago",
-    href: "/app/business/activity/sarah-a/merchant-onboarded",
-  },
-  {
-    initials: "DK",
-    agent: "David K.",
-    activity: "Customer activated",
-    campaign: "Customer Activation Campaign",
-    status: "verified",
-    reward: "+3 USDC",
-    time: "1h ago",
-    href: "/app/business/activity/david-k/customer-activated",
-  },
-  {
-    initials: "AT",
-    agent: "Amina T.",
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    status: "pending",
-    reward: null,
-    time: "3h ago",
-  },
-  {
-    initials: "TO",
-    agent: "Tunde O.",
-    activity: "Referral converted",
-    campaign: "Referral Growth Campaign",
-    status: "verified",
-    reward: "+5 USDC",
-    time: "Yesterday",
-    href: "/app/business/activity/tunde-o/referral-converted",
-  },
-  {
-    initials: "FR",
-    agent: "Fatima R.",
-    activity: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    status: "pending",
-    reward: null,
-    time: "Yesterday",
-  },
-];
+    const campaign =
+      requireCampaign(item.campaignId);
+
+    return {
+      id: item.id,
+      initials: agent.initials,
+      agent: agent.name,
+      activity: item.activity,
+      campaign: campaign.name,
+      status: item.status,
+      reward:
+        item.rewardAmount === null
+          ? null
+          : `+${item.rewardAmount} ${CURRENCY}`,
+      time: item.submittedLabel,
+      href:
+        item.status === "verified"
+          ? `/app/business/activity/${agent.id}/${activitySlug(
+              item.activity
+            )}`
+          : undefined,
+    };
+  }
+);
+
+const businessCampaignOptions =
+  Array.from(
+    new Set(
+      rows.map(
+        (row) => row.campaign
+      )
+    )
+  );
 
 function SearchIcon() {
   return (
@@ -194,9 +188,7 @@ export function BusinessActivityConnected() {
             <span className="h-2 w-2 rounded-full bg-[#F5B942]" />
           </div>
 
-          <span className="font-display text-3xl font-bold text-white">
-            6
-          </span>
+          <span className="font-display text-3xl font-bold text-white">{businessActivitySummary.pending}</span>
         </div>
 
         <div className="flex min-h-[116px] flex-col justify-between rounded-xl border border-[#1B2A22] bg-[#0C120F] p-5 transition-colors hover:border-[#294034]">
@@ -208,9 +200,7 @@ export function BusinessActivityConnected() {
             <span className="h-2 w-2 rounded-full bg-[#02C763]" />
           </div>
 
-          <span className="font-display text-3xl font-bold text-white">
-            71
-          </span>
+          <span className="font-display text-3xl font-bold text-white">{businessActivitySummary.verified}</span>
         </div>
 
         <div className="flex min-h-[116px] flex-col justify-between rounded-xl border border-[#1B2A22] bg-[#0C120F] p-5 transition-colors hover:border-[#294034] sm:col-span-2 lg:col-span-1">
@@ -276,23 +266,22 @@ export function BusinessActivityConnected() {
             onChange={(event) =>
               setCampaign(event.target.value)
             }
-            className="min-w-[210px] cursor-pointer rounded-full border-0 bg-[#0C120F] px-4 py-2.5 text-xs font-medium text-white outline-none ring-0 transition-colors hover:bg-[#142019] focus:ring-0"
+            className="rounded-full border-0 bg-[#0C120F] px-4 py-2.5 text-sm text-white outline-none focus:bg-[#142019] focus:ring-0"
           >
             <option value="all">
               All campaigns
             </option>
 
-            <option value="Merchant Growth Campaign">
-              Merchant Growth Campaign
-            </option>
-
-            <option value="Customer Activation Campaign">
-              Customer Activation Campaign
-            </option>
-
-            <option value="Referral Growth Campaign">
-              Referral Growth Campaign
-            </option>
+            {businessCampaignOptions.map(
+              (campaignName) => (
+                <option
+                  key={campaignName}
+                  value={campaignName}
+                >
+                  {campaignName}
+                </option>
+              )
+            )}
           </select>
         </div>
 
@@ -485,7 +474,8 @@ export function BusinessActivityConnected() {
             <strong className="font-semibold text-white">
               {filteredRows.length}
             </strong>{" "}
-            of 77 activities
+            of{" "}
+            {businessActivitySummary.total} activities
           </span>
 
           <div className="flex items-center gap-1.5">

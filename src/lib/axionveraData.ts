@@ -142,6 +142,14 @@ export const agents: Agent[] = [
     walletLabel: "Agent Account",
     walletAddressShort: "G...TUN",
   },
+  {
+    id: "fatima-r",
+    name: "Fatima R.",
+    initials: "FR",
+    walletLabel: "Agent Account",
+    walletAddressShort: "G...FAT",
+  },
+
 ];
 
 /*
@@ -360,6 +368,71 @@ export const agentActivities: Activity[] = [
 
 /*
  * ----------------------------------------------------------
+ * Business activity
+ * ----------------------------------------------------------
+ *
+ * Business-wide feed shown in the Business Activity workspace.
+ * This is intentionally separate from Amina's personal
+ * Agent Activity history because the two screens represent
+ * different query scopes.
+ */
+
+export const businessActivities: Activity[] = [
+  {
+    id: "business-activity-001",
+    agentId: "sarah-a",
+    activity: "Merchant onboarded",
+    campaignId: "merchant-growth",
+    status: "verified",
+    rewardAmount: 5,
+    submittedLabel: "15m ago",
+  },
+  {
+    id: "business-activity-002",
+    agentId: "david-k",
+    activity: "Customer activated",
+    campaignId: "customer-activation",
+    status: "verified",
+    rewardAmount: 3,
+    submittedLabel: "1h ago",
+  },
+  {
+    id: "business-activity-003",
+    agentId: "amina-t",
+    activity: "Merchant onboarded",
+    campaignId: "merchant-growth",
+    status: "pending",
+    rewardAmount: null,
+    submittedLabel: "3h ago",
+  },
+  {
+    id: "business-activity-004",
+    agentId: "tunde-o",
+    activity: "Referral converted",
+    campaignId: "referral-growth",
+    status: "verified",
+    rewardAmount: 5,
+    submittedLabel: "Yesterday",
+  },
+  {
+    id: "business-activity-005",
+    agentId: "fatima-r",
+    activity: "Merchant onboarded",
+    campaignId: "merchant-growth",
+    status: "pending",
+    rewardAmount: null,
+    submittedLabel: "Yesterday",
+  },
+];
+
+export const businessActivitySummary = {
+  total: 77,
+  verified: 71,
+  pending: 6,
+} as const;
+
+/*
+ * ----------------------------------------------------------
  * Agent reward aggregates
  * ----------------------------------------------------------
  *
@@ -543,4 +616,19 @@ export function requireVerifier(
   }
 
   return verifier;
+}
+
+
+export function requireAgent(
+  id: Agent["id"]
+): Agent {
+  const agent = getAgent(id);
+
+  if (!agent) {
+    throw new Error(
+      `Agent "${id}" was not found.`
+    );
+  }
+
+  return agent;
 }
