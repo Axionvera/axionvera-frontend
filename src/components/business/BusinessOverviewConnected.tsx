@@ -1,3 +1,10 @@
+import {
+  CURRENCY,
+  businessActivities,
+  campaigns as centralCampaigns,
+  requireAgent,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
 
 function PlusIcon() {
@@ -68,55 +75,60 @@ function ActivityIcon() {
   );
 }
 
-const campaigns = [
-  {
-    name: "Merchant Growth Campaign",
-    reward: "5 USDC",
-    funded: "1,000 USDC",
-    allocated: "325 USDC",
-    progress: 32.5,
-  },
-  {
-    name: "Customer Activation Campaign",
-    reward: "3 USDC",
-    funded: "750 USDC",
-    allocated: "210 USDC",
-    progress: 28,
-  },
-  {
-    name: "Referral Growth Campaign",
-    reward: "5 USDC",
-    funded: "750 USDC",
-    allocated: "290 USDC",
-    progress: 38.6,
-  },
-];
+const campaigns =
+  centralCampaigns
+    .filter(
+      (campaign) =>
+        campaign.status === "active"
+    )
+    .map((campaign) => ({
+      name: campaign.name,
+      reward:
+        `${campaign.rewardPerVerifiedAction} ${CURRENCY}`,
+      funded:
+        `${campaign.fundedAmount.toLocaleString()} ${CURRENCY}`,
+      allocated:
+        `${campaign.allocatedRewards.toLocaleString()} ${CURRENCY}`,
+      progress:
+        campaign.fundedAmount > 0
+          ? (
+              campaign.allocatedRewards /
+              campaign.fundedAmount
+            ) * 100
+          : 0,
+    }));
 
-const activity = [
-  {
-    agent: "Sarah A.",
-    action: "Merchant onboarded",
-    reward: "+5 USDC allocated",
-    time: "12m ago",
-  },
-  {
-    agent: "David K.",
-    action: "Customer activated",
-    reward: "+3 USDC allocated",
-    time: "44m ago",
-  },
-  {
-    agent: "Amina T.",
-    action: "Referral converted",
-    reward: "+5 USDC allocated",
-    time: "2h ago",
-  },
-];
+const activity =
+  businessActivities
+    .filter(
+      (item) =>
+        item.status === "verified"
+    )
+    .slice(0, 3)
+    .map((item) => {
+      const agent =
+        requireAgent(item.agentId);
+
+      return {
+        agent: agent.name,
+        action: item.activity,
+        reward:
+          item.rewardAmount == null
+            ? "Reward pending"
+            : `+${item.rewardAmount} ${CURRENCY} allocated`,
+        time: item.submittedLabel,
+      };
+    });
 
 const metrics = [
   {
     label: "Active campaigns",
-    value: "3",
+    value: String(
+      centralCampaigns.filter(
+        (campaign) =>
+          campaign.status === "active"
+      ).length
+    ),
   },
   {
     label: "Campaign funds",

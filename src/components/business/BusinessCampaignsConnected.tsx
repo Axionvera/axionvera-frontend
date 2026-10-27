@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  CURRENCY,
+  campaigns as centralCampaigns,
+  requireCampaign,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -17,40 +23,25 @@ type Campaign = {
   agents: number;
 };
 
-const campaigns: Campaign[] = [
-  {
-    name: "Merchant Growth Campaign",
-    status: "Active",
-    reward: "5 USDC",
-    funded: 1000,
-    allocated: 325,
-    agents: 24,
-  },
-  {
-    name: "Customer Activation Campaign",
-    status: "Active",
-    reward: "3 USDC",
-    funded: 750,
-    allocated: 210,
-    agents: 18,
-  },
-  {
-    name: "Referral Growth Campaign",
-    status: "Active",
-    reward: "5 USDC",
-    funded: 750,
-    allocated: 290,
-    agents: 16,
-  },
-  {
-    name: "Retail Expansion Campaign",
-    status: "Paused",
-    reward: "8 USDC",
-    funded: 500,
-    allocated: 160,
-    agents: 9,
-  },
-];
+const campaigns: Campaign[] =
+  centralCampaigns.map((campaign) => ({
+    name: campaign.name,
+    status:
+      campaign.status === "active"
+        ? "Active"
+        : "Paused",
+    reward:
+      `${campaign.rewardPerVerifiedAction} ${CURRENCY}`,
+    funded: campaign.fundedAmount,
+    allocated: campaign.allocatedRewards,
+    agents: campaign.activeAgents,
+  }));
+
+const merchantGrowthCampaign =
+  requireCampaign("merchant-growth");
+
+const merchantGrowthHref =
+  `/app/business/campaigns/${merchantGrowthCampaign.slug}`;
 
 const filters = [
   "All",
@@ -360,9 +351,9 @@ export function BusinessCampaignsConnected() {
                       className="group transition-colors hover:bg-[#142019]/60"
                     >
                       <td className="whitespace-nowrap px-5 py-4 font-medium text-white">
-                        {campaign.name === "Merchant Growth Campaign" ? (
+                        {campaign.name === merchantGrowthCampaign.name ? (
                           <Link
-                            href="/app/business/campaigns/merchant-growth-campaign"
+                            href={merchantGrowthHref}
                             className="transition-colors hover:text-[#02C763]"
                           >
                             {campaign.name}
