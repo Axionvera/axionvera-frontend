@@ -118,6 +118,38 @@ export function BusinessCampaignDetailConnected() {
   const [pauseCampaignOpen, setPauseCampaignOpen] =
     useState(false);
 
+  const [campaignPaused, setCampaignPaused] =
+    useState(false);
+
+  const [resumeCampaignOpen, setResumeCampaignOpen] =
+    useState(false);
+
+
+  // Auto-dismiss resume modal with Escape
+  useEffect(() => {
+    if (!resumeCampaignOpen) return;
+
+    const closeResumeModal = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setResumeCampaignOpen(false);
+      }
+    };
+
+    document.addEventListener(
+      "keydown",
+      closeResumeModal
+    );
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        closeResumeModal
+      );
+    };
+  }, [resumeCampaignOpen]);
+
   // Auto-dismiss pause modal with Escape
   useEffect(() => {
     if (!pauseCampaignOpen) return;
@@ -266,13 +298,44 @@ export function BusinessCampaignDetailConnected() {
 
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[#02C763]/25 bg-[#02C763]/10 px-2.5 py-0.5 text-xs font-medium text-[#02C763]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-              Active
-            </span>
+            {campaignPaused ? "Paused" : "Active"}
+          </span>
           </div>
 
           <p className="mt-2 text-sm text-[#718277]">
             Reward agents for verified merchant onboarding.
           </p>
+
+        {campaignPaused && (
+          <div className="mt-3 flex max-w-2xl items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3.5 py-3">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              className="mt-0.5 h-4 w-4 shrink-0 text-amber-400"
+              strokeWidth="1.8"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
+              <path
+                strokeLinecap="round"
+                d="M12 11v5M12 8h.01"
+              />
+            </svg>
+
+            <p className="text-xs leading-5 text-[#E1E3DF]">
+              <span className="font-semibold text-amber-400">
+                New reward allocations are paused.
+              </span>{" "}
+              Rewards already allocated remain claimable
+              by agents. Resume the campaign to allow new
+              verified activity to allocate rewards again.
+            </p>
+          </div>
+        )}
         </div>
 
         <div className="flex items-center gap-3 self-start md:self-auto">
@@ -304,11 +367,19 @@ export function BusinessCampaignDetailConnected() {
                   className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-medium text-[#9DA8A1] transition-colors hover:bg-[#16281E] hover:text-white"
                 
               onClick={() => {
-                setPauseCampaignOpen(true);
+                setMenuOpen(false);
+
+                if (campaignPaused) {
+                  setResumeCampaignOpen(true);
+                } else {
+                  setPauseCampaignOpen(true);
+                }
               }}
             >
                   <PauseIcon />
-                  Pause Campaign
+                  {campaignPaused
+                    ? "Resume Campaign"
+                    : "Pause Campaign"}
                 </button>
 
                 <button
@@ -390,8 +461,8 @@ export function BusinessCampaignDetailConnected() {
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-[#02C763]" />
               <span className="text-sm font-medium text-white">
-                Active
-              </span>
+            {campaignPaused ? "Paused" : "Active"}
+          </span>
             </div>
           </div>
         </div>
@@ -704,13 +775,148 @@ export function BusinessCampaignDetailConnected() {
 
               <button
                 type="button"
-                onClick={() =>
-                  setPauseCampaignOpen(false)
-                }
-                title="Paused campaign state will be connected after its UI is added"
+                onClick={() => {
+                  setCampaignPaused(true);
+                  setPauseCampaignOpen(false);
+                }}
                 className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-neutral-950 shadow-sm transition-colors hover:bg-amber-400"
               >
                 Pause campaign
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
+      {/* Resume campaign confirmation */}
+      {resumeCampaignOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="resume-campaign-title"
+          onClick={() =>
+            setResumeCampaignOpen(false)
+          }
+        >
+          <div
+            className="relative w-full max-w-[480px] rounded-2xl border border-[#1B2A22] bg-[#101813] p-6 shadow-2xl"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-[#02C763]/20 bg-[#02C763]/10 text-[#02C763]">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="h-[22px] w-[22px]"
+                strokeWidth="1.9"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m9 7 8 5-8 5V7Z"
+                />
+              </svg>
+            </div>
+
+            <h2
+              id="resume-campaign-title"
+              className="font-display text-xl font-semibold tracking-tight text-white"
+            >
+              Resume campaign?
+            </h2>
+
+            <p className="mt-2 text-sm leading-relaxed text-[#9DA8A1]">
+              Resuming Merchant Growth Campaign will allow
+              new verified qualifying activity to allocate
+              rewards again.
+            </p>
+
+            <div className="my-4 flex items-start gap-2.5 rounded-xl border border-[#294034] bg-[#142019] p-3.5">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="mt-0.5 h-[18px] w-[18px] shrink-0 text-[#02C763]"
+                strokeWidth="1.8"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                />
+                <path
+                  strokeLinecap="round"
+                  d="M12 11v5M12 8h.01"
+                />
+              </svg>
+
+              <span className="text-xs leading-normal text-[#E1E3DF]">
+                Existing campaign funds become available
+                for new reward allocations again according
+                to the campaign rules.
+              </span>
+            </div>
+
+            <div className="mb-6 space-y-2.5 rounded-xl border border-[#1B2A22] bg-[#080D0A] p-3.5 text-xs">
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-[#718277]">
+                  Campaign
+                </span>
+
+                <span className="font-medium text-white">
+                  Merchant Growth Campaign
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-[#718277]">
+                  Current status
+                </span>
+
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  Paused
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-[#718277]">
+                  Available funds
+                </span>
+
+                <span className="font-semibold text-white">
+                  675 USDC
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+
+              <button
+                type="button"
+                onClick={() =>
+                  setResumeCampaignOpen(false)
+                }
+                className="rounded-lg border border-[#294034] px-4 py-2.5 text-sm font-medium text-[#E1E3DF] transition-colors hover:bg-[#142019] hover:text-white"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCampaignPaused(false);
+                  setResumeCampaignOpen(false);
+                }}
+                className="rounded-lg bg-[#02C763] px-4 py-2.5 text-sm font-semibold text-[#031009] shadow-sm transition-colors hover:bg-[#02D86F]"
+              >
+                Resume campaign
               </button>
             </div>
           </div>
