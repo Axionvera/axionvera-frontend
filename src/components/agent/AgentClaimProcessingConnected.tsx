@@ -1,6 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import {
+  CURRENCY,
+  getClaimableRewardBreakdownForAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+} from "@/lib/axionveraData";
 
 function Spinner() {
   return (
@@ -49,6 +55,35 @@ function InfoIcon() {
 }
 
 export function AgentClaimProcessingConnected() {
+  const summary =
+    requireAgentRewardSummary("amina-t");
+
+  const claimableBreakdown =
+    getClaimableRewardBreakdownForAgent(
+      "amina-t"
+    );
+
+  const merchantCampaign =
+    requireCampaign("merchant-growth");
+
+  const referralCampaign =
+    requireCampaign("referral-growth");
+
+  const merchantClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "merchant-growth"
+    )?.amount ?? 0;
+
+  const referralClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "referral-growth"
+    )?.amount ?? 0;
+
+  const claimAmount =
+    summary.claimable;
+
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 pb-16">
 
@@ -80,7 +115,7 @@ export function AgentClaimProcessingConnected() {
           </h2>
 
           <p className="mt-1.5 text-sm leading-6 text-[#A7B3AB]">
-            Your 20 USDC claim has been approved and is
+            Your {claimAmount} {CURRENCY} claim has been approved and is
             being processed.
           </p>
         </div>
@@ -146,11 +181,11 @@ export function AgentClaimProcessingConnected() {
 
             <div className="flex items-center justify-between gap-4 px-4 py-3">
               <span className="text-sm text-[#E1E3DF]">
-                Merchant Growth Campaign
+                {merchantCampaign.name}
               </span>
 
               <span className="text-sm font-medium text-white">
-                15 USDC
+                {merchantClaimable} {CURRENCY}
               </span>
             </div>
 
@@ -158,11 +193,11 @@ export function AgentClaimProcessingConnected() {
 
             <div className="flex items-center justify-between gap-4 px-4 py-3">
               <span className="text-sm text-[#E1E3DF]">
-                Referral Growth Campaign
+                {referralCampaign.name}
               </span>
 
               <span className="text-sm font-medium text-white">
-                5 USDC
+                {referralClaimable} {CURRENCY}
               </span>
             </div>
           </div>
