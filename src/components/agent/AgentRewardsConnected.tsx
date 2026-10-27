@@ -1,6 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import {
+  CURRENCY,
+  getClaimableRewardBreakdownForAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+} from "@/lib/axionveraData";
 
 function WalletIcon() {
   return (
@@ -118,6 +124,32 @@ function ArrowRight() {
 }
 
 export function AgentRewardsConnected() {
+  const summary =
+    requireAgentRewardSummary("amina-t");
+
+  const claimableBreakdown =
+    getClaimableRewardBreakdownForAgent(
+      "amina-t"
+    );
+
+  const merchantCampaign =
+    requireCampaign("merchant-growth");
+
+  const referralCampaign =
+    requireCampaign("referral-growth");
+
+  const merchantClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "merchant-growth"
+    )?.amount ?? 0;
+
+  const referralClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "referral-growth"
+    )?.amount ?? 0;
+
   return (
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-6 pb-16">
 
@@ -149,7 +181,7 @@ export function AgentRewardsConnected() {
 
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-semibold tracking-tight text-white">
-              45 USDC
+              {summary.totalEarned} {CURRENCY}
             </span>
           </div>
         </div>
@@ -167,7 +199,7 @@ export function AgentRewardsConnected() {
             </div>
 
             <span className="text-2xl font-semibold tracking-tight text-[#02C763]">
-              20 USDC
+              {summary.claimable} {CURRENCY}
             </span>
           </div>
         </div>
@@ -184,7 +216,7 @@ export function AgentRewardsConnected() {
           </div>
 
           <span className="text-2xl font-semibold tracking-tight text-white">
-            25 USDC
+            {summary.claimed} {CURRENCY}
           </span>
         </div>
       </section>
@@ -205,7 +237,7 @@ export function AgentRewardsConnected() {
 
           <div className="my-4">
             <div className="font-display text-4xl font-bold tracking-tight text-[#02C763]">
-              20 USDC
+              {summary.claimable} {CURRENCY}
             </div>
 
             <p className="mt-2 max-w-lg text-sm leading-6 text-[#9DA8A1]">
@@ -220,7 +252,7 @@ export function AgentRewardsConnected() {
             className="inline-flex items-center gap-2 rounded-[10px] bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#031009] transition-colors hover:bg-[#02D86F]"
           >
             <WalletIcon />
-            Claim 20 USDC
+            Claim {summary.claimable} {CURRENCY}
           </Link>
 
           {/* BREAKDOWN */}
@@ -238,12 +270,12 @@ export function AgentRewardsConnected() {
                   </div>
 
                   <span className="truncate text-sm font-medium text-white">
-                    Merchant Growth Campaign
+                    {merchantCampaign.name}
                   </span>
                 </div>
 
                 <span className="shrink-0 text-sm font-semibold text-[#02C763]">
-                  15 USDC claimable
+                  {merchantClaimable} {CURRENCY} claimable
                 </span>
               </div>
 
@@ -254,12 +286,12 @@ export function AgentRewardsConnected() {
                   </div>
 
                   <span className="truncate text-sm font-medium text-white">
-                    Referral Growth Campaign
+                    {referralCampaign.name}
                   </span>
                 </div>
 
                 <span className="shrink-0 text-sm font-semibold text-[#02C763]">
-                  5 USDC claimable
+                  {referralClaimable} {CURRENCY} claimable
                 </span>
               </div>
             </div>

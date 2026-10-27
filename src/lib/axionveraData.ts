@@ -483,8 +483,62 @@ export const rewardEntries: RewardEntry[] = [
     campaignId: "merchant-growth",
     activity: "Merchant onboarded",
     amount: 5,
+    status: "claimable",
+    timeLabel: "2 days ago",
+  },
+  {
+    id: "reward-004",
+    agentId: "amina-t",
+    campaignId: "merchant-growth",
+    activity: "Merchant onboarded",
+    amount: 5,
+    status: "claimable",
+    timeLabel: "4 days ago",
+  },
+  {
+    id: "reward-005",
+    agentId: "amina-t",
+    campaignId: "merchant-growth",
+    activity: "Merchant onboarded",
+    amount: 5,
     status: "claimed",
     timeLabel: "Yesterday",
+  },
+  {
+    id: "reward-006",
+    agentId: "amina-t",
+    campaignId: "referral-growth",
+    activity: "Referral converted",
+    amount: 5,
+    status: "claimed",
+    timeLabel: "5 days ago",
+  },
+  {
+    id: "reward-007",
+    agentId: "amina-t",
+    campaignId: "merchant-growth",
+    activity: "Merchant onboarded",
+    amount: 5,
+    status: "claimed",
+    timeLabel: "6 days ago",
+  },
+  {
+    id: "reward-008",
+    agentId: "amina-t",
+    campaignId: "referral-growth",
+    activity: "Referral converted",
+    amount: 5,
+    status: "claimed",
+    timeLabel: "1 week ago",
+  },
+  {
+    id: "reward-009",
+    agentId: "amina-t",
+    campaignId: "merchant-growth",
+    activity: "Merchant onboarded",
+    amount: 5,
+    status: "claimed",
+    timeLabel: "2 weeks ago",
   },
 ];
 
@@ -558,6 +612,43 @@ export function getActivitiesForAgent(
   return agentActivities.filter(
     (activity) =>
       activity.agentId === agentId
+  );
+}
+
+export function getClaimableRewardBreakdownForAgent(
+  agentId: Agent["id"]
+): Array<{
+  campaignId: CampaignId;
+  amount: number;
+}> {
+  const totals =
+    new Map<CampaignId, number>();
+
+  for (
+    const reward
+    of rewardEntries
+  ) {
+    if (
+      reward.agentId !== agentId ||
+      reward.status !== "claimable"
+    ) {
+      continue;
+    }
+
+    totals.set(
+      reward.campaignId,
+      (totals.get(reward.campaignId) ?? 0)
+        + reward.amount
+    );
+  }
+
+  return Array.from(
+    totals.entries()
+  ).map(
+    ([campaignId, amount]) => ({
+      campaignId,
+      amount,
+    })
   );
 }
 
