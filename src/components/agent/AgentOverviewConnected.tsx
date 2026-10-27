@@ -1,6 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import {
+  CURRENCY,
+  requireAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+  requireVerifier,
+} from "@/lib/axionveraData";
 
 function ArrowRight() {
   return (
@@ -57,6 +64,23 @@ function ShieldIcon() {
 }
 
 export function AgentOverviewConnected() {
+  const agent =
+    requireAgent("amina-t");
+
+  const summary =
+    requireAgentRewardSummary("amina-t");
+
+  const campaign =
+    requireCampaign("merchant-growth");
+
+  const verifier =
+    campaign.verifierId
+      ? requireVerifier(campaign.verifierId)
+      : null;
+
+  const firstName =
+    agent.name.split(" ")[0];
+
   return (
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8 pb-16">
 
@@ -67,7 +91,7 @@ export function AgentOverviewConnected() {
         </p>
 
         <h2 className="font-display text-2xl font-semibold tracking-tight text-white md:text-3xl">
-          Welcome back, Amina
+          Welcome back, {firstName}
         </h2>
 
         <p className="mt-1.5 max-w-2xl text-sm leading-6 text-[#A7B3AB]">
@@ -93,9 +117,7 @@ export function AgentOverviewConnected() {
             </div>
 
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-3xl font-bold tracking-tight text-white">
-                20
-              </span>
+              <span className="font-display text-3xl font-bold tracking-tight text-white">{summary.claimable}</span>
 
               <span className="text-sm font-semibold text-[#02C763]">
                 USDC
@@ -118,9 +140,7 @@ export function AgentOverviewConnected() {
             <span className="h-2 w-2 rounded-full bg-[#02C763]" />
           </div>
 
-          <span className="font-display text-3xl font-bold text-white">
-            18
-          </span>
+          <span className="font-display text-3xl font-bold text-white">{summary.verifiedActivity}</span>
 
           <p className="mt-2 text-xs text-[#718277]">
             Qualifying actions verified
@@ -137,9 +157,7 @@ export function AgentOverviewConnected() {
             <span className="h-2 w-2 rounded-full bg-[#F5B942]" />
           </div>
 
-          <span className="font-display text-3xl font-bold text-white">
-            2
-          </span>
+          <span className="font-display text-3xl font-bold text-white">{summary.pendingActivity}</span>
 
           <p className="mt-2 text-xs text-[#718277]">
             Activity awaiting review
@@ -265,9 +283,9 @@ export function AgentOverviewConnected() {
               </div>
 
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-0.5 text-xs font-medium text-[#02C763]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-                Active
-              </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{campaign.status === "active"
+      ? "Active"
+      : "Paused"}</span>
             </div>
 
             <div className="rounded-xl border border-[#1B2A22] bg-[#101813] p-5">
@@ -277,9 +295,7 @@ export function AgentOverviewConnected() {
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold text-white">
-                    Merchant Growth Campaign
-                  </h4>
+                  <h4 className="text-sm font-semibold text-white">{campaign.name}</h4>
 
                   <p className="mt-1 text-xs leading-5 text-[#718277]">
                     Earn rewards for verified merchant
@@ -294,9 +310,7 @@ export function AgentOverviewConnected() {
                     Qualifying action
                   </span>
 
-                  <p className="mt-1.5 text-sm font-medium text-white">
-                    Merchant onboarded
-                  </p>
+                  <p className="mt-1.5 text-sm font-medium text-white">{campaign.qualifyingAction}</p>
                 </div>
 
                 <div>
@@ -304,9 +318,7 @@ export function AgentOverviewConnected() {
                     Reward
                   </span>
 
-                  <p className="mt-1.5 text-sm font-semibold text-[#02C763]">
-                    5 USDC
-                  </p>
+                  <p className="mt-1.5 text-sm font-semibold text-[#02C763]">{`${campaign.rewardPerVerifiedAction} ${CURRENCY}`}</p>
                 </div>
 
                 <div>
@@ -319,9 +331,7 @@ export function AgentOverviewConnected() {
                       <ShieldIcon />
                     </span>
 
-                    <span className="text-sm font-medium text-white">
-                      Operations Team
-                    </span>
+                    <span className="text-sm font-medium text-white">{verifier?.name ?? "Not assigned"}</span>
                   </div>
                 </div>
               </div>
