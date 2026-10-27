@@ -1,6 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import {
+  CURRENCY,
+  getClaimableRewardBreakdownForAgent,
+  requireAgentRewardSummary,
+  requireCampaign,
+} from "@/lib/axionveraData";
 
 function Spinner() {
   return (
@@ -46,6 +52,41 @@ function InfoIcon() {
 }
 
 export function AgentClaimApprovalConnected() {
+  const summary =
+    requireAgentRewardSummary("amina-t");
+
+  const claimableBreakdown =
+    getClaimableRewardBreakdownForAgent(
+      "amina-t"
+    );
+
+  const merchantCampaign =
+    requireCampaign("merchant-growth");
+
+  const referralCampaign =
+    requireCampaign("referral-growth");
+
+  const merchantClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "merchant-growth"
+    )?.amount ?? 0;
+
+  const referralClaimable =
+    claimableBreakdown.find(
+      (item) =>
+        item.campaignId === "referral-growth"
+    )?.amount ?? 0;
+
+  const claimAmount =
+    summary.claimable;
+
+  const balanceAfterClaim =
+    Math.max(
+      0,
+      summary.claimable - claimAmount
+    );
+
   return (
     <div className="mx-auto w-full max-w-xl pb-16">
 
@@ -79,7 +120,7 @@ export function AgentClaimApprovalConnected() {
           </h2>
 
           <p className="mt-1.5 text-sm leading-6 text-[#A7B3AB]">
-            Approve the 20 USDC claim in your connected
+            Approve the {claimAmount} {CURRENCY} claim in your connected
             wallet.
           </p>
         </div>
@@ -104,9 +145,7 @@ export function AgentClaimApprovalConnected() {
                 Claim amount
               </span>
 
-              <span className="font-display text-base font-semibold text-[#02C763]">
-                20 USDC
-              </span>
+              <span className="font-display text-base font-semibold text-[#02C763]">{`${claimAmount} ${CURRENCY}`}</span>
             </div>
 
             <div className="h-px w-full bg-[#272B28]/70" />
@@ -116,9 +155,7 @@ export function AgentClaimApprovalConnected() {
                 Current claimable balance
               </span>
 
-              <span className="font-medium text-white">
-                20 USDC
-              </span>
+              <span className="font-medium text-white">{`${summary.claimable} ${CURRENCY}`}</span>
             </div>
 
             <div className="flex items-center justify-between gap-4 text-xs">
@@ -126,9 +163,7 @@ export function AgentClaimApprovalConnected() {
                 Claimable balance after claim
               </span>
 
-              <span className="font-medium text-[#718277]">
-                0 USDC
-              </span>
+              <span className="font-medium text-[#718277]">{`${balanceAfterClaim} ${CURRENCY}`}</span>
             </div>
           </div>
 
@@ -140,28 +175,28 @@ export function AgentClaimApprovalConnected() {
               </span>
 
               <span className="text-xs font-medium text-[#718277]">
-                2 campaigns
+                {claimableBreakdown.length} campaigns
               </span>
             </div>
 
             <div className="space-y-2.5 rounded-[10px] bg-[#142019] p-3.5">
               <div className="flex items-center justify-between gap-4 text-xs">
                 <span className="text-[#E1E3DF]">
-                  Merchant Growth Campaign
+                  {merchantCampaign.name}
                 </span>
 
                 <span className="font-medium text-white">
-                  15 USDC
+                  {merchantClaimable} {CURRENCY}
                 </span>
               </div>
 
               <div className="flex items-center justify-between gap-4 text-xs">
                 <span className="text-[#E1E3DF]">
-                  Referral Growth Campaign
+                  {referralCampaign.name}
                 </span>
 
                 <span className="font-medium text-white">
-                  5 USDC
+                  {referralClaimable} {CURRENCY}
                 </span>
               </div>
             </div>
