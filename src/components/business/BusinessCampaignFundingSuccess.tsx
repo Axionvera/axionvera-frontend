@@ -245,7 +245,8 @@ export function BusinessCampaignFundingSuccess() {
               </span>
 
               <span className="text-sm font-medium text-[#E1E3DF]">
-                5 USDC{" "}
+                {merchantGrowthFundingPreview.rewardPerVerifiedAction}{" "}
+                {CURRENCY}{" "}
                 <span className="font-normal text-[#718277]">
                   per verified action
                 </span>

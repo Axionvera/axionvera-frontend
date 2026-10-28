@@ -903,6 +903,9 @@ export const merchantGrowthFundingPreview = {
     merchantGrowthFundingCampaign.slug,
   campaignStatus:
     merchantGrowthFundingCampaign.status,
+  rewardPerVerifiedAction:
+    merchantGrowthFundingCampaign
+      .rewardPerVerifiedAction,
   previousFunds: 0,
   amount:
     merchantGrowthFundingCampaign.fundedAmount,

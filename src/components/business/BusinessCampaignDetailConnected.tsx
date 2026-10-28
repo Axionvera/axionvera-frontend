@@ -600,9 +600,7 @@ export function BusinessCampaignDetailConnected() {
                   <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
                   Allocated
                 </span>
-                <span className="text-sm font-semibold text-[#02C763]">
-                  325 USDC
-                </span>
+                <span className="text-sm font-semibold text-[#02C763]">{`${campaign.allocatedRewards.toLocaleString()} ${CURRENCY}`}</span>
               </div>
 
               <div className="border-l border-[#1B2A22]/60 pl-3">

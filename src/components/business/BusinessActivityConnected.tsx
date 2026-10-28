@@ -425,7 +425,8 @@ export function BusinessActivityConnected() {
                         >
                           View
                         </Link>
-                      ) : row.agent === "Amina T." ? (
+                      ) : row.agent ===
+                            requireAgent("amina-t").name ? (
                         <Link
                           href="/app/business/activity/amina-t/merchant-onboarded"
                           className="inline-flex rounded border border-[#02C763]/40 bg-[#02C763]/10 px-3 py-1 text-xs font-medium text-[#02C763] transition-colors hover:bg-[#02C763]/20 hover:text-white"

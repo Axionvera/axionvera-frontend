@@ -172,9 +172,7 @@ export function BusinessCampaignFundingReview() {
                 Reward per verified action
               </span>
 
-              <span className="font-mono text-base font-semibold text-white">
-                5 USDC
-              </span>
+              <span className="font-mono text-base font-semibold text-white">{`${merchantGrowthFundingPreview.rewardPerVerifiedAction.toLocaleString()} ${CURRENCY}`}</span>
             </div>
           </div>
         </section>
