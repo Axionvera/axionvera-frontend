@@ -1,0 +1,260 @@
+"use client";
+
+import Link from "next/link";
+
+function CampaignIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="1.8"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 20V7l8-3 8 3v13M8 20v-5h8v5M8 9h.01M12 9h.01M16 9h.01"
+      />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-[18px] w-[18px]"
+      strokeWidth="1.8"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path
+        strokeLinecap="round"
+        d="M12 11v5M12 8h.01"
+      />
+    </svg>
+  );
+}
+
+function ArrowLeft() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="1.9"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19 12H5m5-5-5 5 5 5"
+      />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="1.9"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 12h14m-5-5 5 5-5 5"
+      />
+    </svg>
+  );
+}
+
+export function BusinessCampaignFundingReview() {
+  const fundingAmount = 1000;
+  const currentFunds = 0;
+  const resultingFunds =
+    currentFunds + fundingAmount;
+
+  return (
+    <div className="mx-auto w-full max-w-3xl pb-16">
+      {/* BREADCRUMB + HEADING */}
+      <div className="mb-6 flex flex-col gap-2">
+        <nav className="flex flex-wrap items-center gap-2 text-xs text-[#718277]">
+          <Link
+            href="/app/business/campaigns"
+            className="transition-colors hover:text-white"
+          >
+            Campaigns
+          </Link>
+
+          <span className="text-[#294034]">
+            /
+          </span>
+
+          <Link
+            href="/app/business/campaigns/merchant-growth-campaign"
+            className="transition-colors hover:text-white"
+          >
+            Merchant Growth Campaign
+          </Link>
+
+          <span className="text-[#294034]">
+            /
+          </span>
+
+          <span className="font-medium text-[#E1E3DF]">
+            Fund campaign
+          </span>
+        </nav>
+
+        <div className="mt-1">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
+            Review funding
+          </h2>
+
+          <p className="mt-1 text-sm leading-6 text-[#8A938D]">
+            Confirm the funding details before
+            adding funds to this campaign.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {/* CAMPAIGN CONTEXT */}
+        <section className="flex flex-col gap-5 rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#294034] bg-[#142019] text-[#02C763]">
+                <CampaignIcon />
+              </div>
+
+              <span className="truncate font-display text-base font-semibold tracking-tight text-white">
+                Merchant Growth Campaign
+              </span>
+            </div>
+
+            <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#294034]/60 bg-[#16281E] px-2.5 py-1 text-xs font-medium text-[#02C763]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
+              Active
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 rounded-lg border border-[#1B2A22] bg-[#101813] p-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-[#718277]">
+                Current campaign funds
+              </span>
+
+              <span className="font-mono text-base font-semibold text-white">
+                {currentFunds.toLocaleString()} USDC
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-[#718277]">
+                Reward per verified action
+              </span>
+
+              <span className="font-mono text-base font-semibold text-white">
+                5 USDC
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* FUNDING DETAILS */}
+        <section className="flex flex-col gap-4 rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-6">
+          <h3 className="font-display text-base font-semibold tracking-tight text-white">
+            Funding details
+          </h3>
+
+          <div className="flex flex-col gap-3 pt-1">
+            <div className="flex items-center justify-between gap-4 text-sm">
+              <span className="text-[#9DA8A1]">
+                Funding amount
+              </span>
+
+              <span className="font-mono text-base font-semibold text-white">
+                {fundingAmount.toLocaleString()} USDC
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 text-sm">
+              <span className="text-[#9DA8A1]">
+                Current campaign funds
+              </span>
+
+              <span className="font-mono text-sm text-[#718277]">
+                {currentFunds.toLocaleString()} USDC
+              </span>
+            </div>
+
+            <div className="my-1 h-px w-full bg-[#1B2A22]" />
+
+            <div className="flex items-center justify-between gap-4 rounded-lg border border-[#1B2A22] bg-[#101813] p-4">
+              <span className="text-sm font-medium text-white">
+                Campaign funds after funding
+              </span>
+
+              <span className="font-mono text-xl font-bold tracking-tight text-white">
+                {resultingFunds.toLocaleString()} USDC
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* INFORMATION */}
+        <section className="flex flex-col gap-3 rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-5">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 shrink-0 text-[#02C763]">
+              <InfoIcon />
+            </span>
+
+            <p className="text-sm leading-relaxed text-[#9DA8A1]">
+              Adding funds increases the campaign&apos;s
+              available balance. Rewards are allocated
+              separately after qualifying activity is
+              verified.
+            </p>
+          </div>
+
+          <div className="flex items-start gap-2 pl-7">
+            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[#718277]" />
+
+            <p className="text-xs leading-5 text-[#718277]">
+              You&apos;ll be asked to approve the
+              funding transaction with your connected
+              wallet.
+            </p>
+          </div>
+        </section>
+
+        {/* ACTIONS */}
+        <div className="flex items-center justify-between gap-4 pt-2">
+          <Link
+            href="/app/business/campaigns/merchant-growth-campaign"
+            className="group inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[#9DA8A1] transition-colors hover:text-white"
+          >
+            <span className="transition-transform group-hover:-translate-x-0.5">
+              <ArrowLeft />
+            </span>
+            Back
+          </Link>
+
+          <Link
+            href="/app/business/campaigns/merchant-growth-campaign?action=fund&stage=approval"
+            className="inline-flex items-center gap-2 rounded-[10px] bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#050806] transition-all hover:-translate-y-px hover:bg-[#02D86F]"
+          >
+            Fund Campaign
+            <ArrowRight />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

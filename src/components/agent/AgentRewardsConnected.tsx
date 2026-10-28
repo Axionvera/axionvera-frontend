@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   CURRENCY,
   getClaimableRewardBreakdownForAgent,
+  getRewardsForAgent,
   requireAgentRewardSummary,
   requireCampaign,
 } from "@/lib/axionveraData";
@@ -149,6 +150,15 @@ export function AgentRewardsConnected() {
       (item) =>
         item.campaignId === "referral-growth"
     )?.amount ?? 0;
+
+  const recentRewards =
+    getRewardsForAgent("amina-t")
+      .slice(0, 3)
+      .map((item) => ({
+        ...item,
+        campaign:
+          requireCampaign(item.campaignId),
+      }));
 
   return (
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-6 pb-16">
@@ -311,92 +321,64 @@ export function AgentRewardsConnected() {
           </div>
 
           <div className="flex flex-1 flex-col divide-y divide-[#1B2A22]">
+            {recentRewards.map(
+              (reward, index) => {
+                const claimable =
+                  reward.status === "claimable";
 
-            <div className="flex items-center justify-between gap-3 py-3.5 first:pt-0">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-white">
-                  Merchant onboarded
-                </p>
+                return (
+                  <div
+                    key={reward.id}
+                    className={[
+                      "flex items-center justify-between gap-3 py-3.5",
+                      index === 0
+                        ? "first:pt-0"
+                        : "",
+                    ].join(" ")}
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-white">
+                        {reward.activity}
+                      </p>
 
-                <p className="mt-1 truncate text-xs text-[#9DA8A1]">
-                  Merchant Growth Campaign
-                </p>
-              </div>
+                      <p className="mt-1 truncate text-xs text-[#9DA8A1]">
+                        {reward.campaign.name}
+                      </p>
+                    </div>
 
-              <div className="shrink-0 text-right">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-[#02C763]">
-                    +5 USDC
-                  </span>
+                    <div className="shrink-0 text-right">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={[
+                            "text-sm font-semibold",
+                            claimable
+                              ? "text-[#02C763]"
+                              : "text-[#9DA8A1]",
+                          ].join(" ")}
+                        >
+                          +{reward.amount} {CURRENCY}
+                        </span>
 
-                  <span className="inline-flex items-center gap-1 rounded-full border border-[#02C763]/25 bg-[#02C763]/10 px-2 py-0.5 text-[11px] text-[#02C763]">
-                    <span className="h-1 w-1 rounded-full bg-[#02C763]" />
-                    Claimable
-                  </span>
-                </div>
+                        {claimable ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[#02C763]/25 bg-[#02C763]/10 px-2 py-0.5 text-[11px] text-[#02C763]">
+                            <span className="h-1 w-1 rounded-full bg-[#02C763]" />
+                            Claimable
+                          </span>
+                        ) : (
+                          <span className="rounded-full border border-[#294034] bg-[#101813] px-2 py-0.5 text-[11px] text-[#9DA8A1]">
+                            Claimed
+                          </span>
+                        )}
+                      </div>
 
-                <p className="mt-1 text-xs text-[#718277]">
-                  15m ago
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-3 py-3.5">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-white">
-                  Referral converted
-                </p>
-
-                <p className="mt-1 truncate text-xs text-[#9DA8A1]">
-                  Referral Growth Campaign
-                </p>
-              </div>
-
-              <div className="shrink-0 text-right">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-[#02C763]">
-                    +5 USDC
-                  </span>
-
-                  <span className="inline-flex items-center gap-1 rounded-full border border-[#02C763]/25 bg-[#02C763]/10 px-2 py-0.5 text-[11px] text-[#02C763]">
-                    <span className="h-1 w-1 rounded-full bg-[#02C763]" />
-                    Claimable
-                  </span>
-                </div>
-
-                <p className="mt-1 text-xs text-[#718277]">
-                  3h ago
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-3 py-3.5">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-white">
-                  Merchant onboarded
-                </p>
-
-                <p className="mt-1 truncate text-xs text-[#9DA8A1]">
-                  Merchant Growth Campaign
-                </p>
-              </div>
-
-              <div className="shrink-0 text-right">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-[#9DA8A1]">
-                    +5 USDC
-                  </span>
-
-                  <span className="rounded-full border border-[#294034] bg-[#101813] px-2 py-0.5 text-[11px] text-[#9DA8A1]">
-                    Claimed
-                  </span>
-                </div>
-
-                <p className="mt-1 text-xs text-[#718277]">
-                  Yesterday
-                </p>
-              </div>
-            </div>
+                      <p className="mt-1 text-xs text-[#718277]">
+                        {reward.timeLabel}
+                      </p>
+                    </div>
+                  </div>
+                );
+              }
+            )}
           </div>
 
           <div className="mt-6 flex justify-end border-t border-[#1B2A22]/60 pt-4">

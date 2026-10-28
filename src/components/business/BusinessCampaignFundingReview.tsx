@@ -1,6 +1,24 @@
 "use client";
 
+import {
+  CURRENCY,
+  merchantGrowthFundingPreview,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
+
+
+const fundingPreview =
+  merchantGrowthFundingPreview;
+
+const fundingCampaignHref =
+  `/app/business/campaigns/${fundingPreview.campaignSlug}`;
+
+const fundingStatusLabel =
+  fundingPreview.campaignStatus === "active"
+    ? "Active"
+    : "Paused";
+
 
 function CampaignIcon() {
   return (
@@ -97,11 +115,9 @@ export function BusinessCampaignFundingReview() {
           </span>
 
           <Link
-            href="/app/business/campaigns/merchant-growth-campaign"
+            href={fundingCampaignHref}
             className="transition-colors hover:text-white"
-          >
-            Merchant Growth Campaign
-          </Link>
+          >{fundingPreview.campaignName}</Link>
 
           <span className="text-[#294034]">
             /
@@ -133,15 +149,11 @@ export function BusinessCampaignFundingReview() {
                 <CampaignIcon />
               </div>
 
-              <span className="truncate font-display text-base font-semibold tracking-tight text-white">
-                Merchant Growth Campaign
-              </span>
+              <span className="truncate font-display text-base font-semibold tracking-tight text-white">{fundingPreview.campaignName}</span>
             </div>
 
             <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#294034]/60 bg-[#16281E] px-2.5 py-1 text-xs font-medium text-[#02C763]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-              Active
-            </div>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{fundingStatusLabel}</div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 rounded-lg border border-[#1B2A22] bg-[#101813] p-4 sm:grid-cols-2">
@@ -237,7 +249,7 @@ export function BusinessCampaignFundingReview() {
         {/* ACTIONS */}
         <div className="flex items-center justify-between gap-4 pt-2">
           <Link
-            href="/app/business/campaigns/merchant-growth-campaign"
+            href={fundingCampaignHref}
             className="group inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[#9DA8A1] transition-colors hover:text-white"
           >
             <span className="transition-transform group-hover:-translate-x-0.5">

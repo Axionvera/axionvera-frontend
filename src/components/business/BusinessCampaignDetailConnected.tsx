@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { CURRENCY, requireCampaign } from "@/lib/axionveraData";
+import {
+  CURRENCY,
+  requireCampaign,
+  merchantGrowthCampaignRecentActivity,
+  requireVerifier,
+} from "@/lib/axionveraData";
 import {
   BusinessCampaignFundingReview,
 } from "@/components/business/BusinessCampaignFundingReview";
@@ -86,32 +91,8 @@ function PersonAddIcon() {
   );
 }
 
-const activity = [
-  {
-    initials: "SA",
-    name: "Sarah A.",
-    action: "Merchant onboarded",
-    status: "Verified",
-    reward: "+5 USDC",
-    time: "15m ago",
-  },
-  {
-    initials: "DK",
-    name: "David K.",
-    action: "Merchant onboarded",
-    status: "Verified",
-    reward: "+5 USDC",
-    time: "1h ago",
-  },
-  {
-    initials: "AT",
-    name: "Amina T.",
-    action: "Merchant onboarded",
-    status: "Pending verification",
-    reward: null,
-    time: "3h ago",
-  },
-];
+const activity =
+  merchantGrowthCampaignRecentActivity;
 
 const merchantGrowthCampaign =
   requireCampaign("merchant-growth");
@@ -124,6 +105,11 @@ if (!merchantGrowthCampaign) {
 
 export function BusinessCampaignDetailConnected() {
   const campaign = merchantGrowthCampaign;
+
+  const campaignVerifier =
+    campaign.verifierId
+      ? requireVerifier(campaign.verifierId)
+      : null;
 
 
 
@@ -468,9 +454,7 @@ export function BusinessCampaignDetailConnected() {
             <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[#718277]">
               Verifier
             </span>
-            <span className="text-sm font-medium text-white">{campaign.verifierId === "operations-team"
-      ? "Operations Team"
-      : "Not assigned"}</span>
+            <span className="text-sm font-medium text-white">{campaignVerifier?.name ?? "Not assigned"}</span>
           </div>
 
           <div>
@@ -608,9 +592,7 @@ export function BusinessCampaignDetailConnected() {
                 <span className="mb-1 block text-xs font-medium text-[#718277]">
                   Funded
                 </span>
-                <span className="text-sm font-semibold text-white">
-                  1,000 USDC
-                </span>
+                <span className="text-sm font-semibold text-white">{`${campaign.fundedAmount.toLocaleString()} ${CURRENCY}`}</span>
               </div>
 
               <div className="border-l border-[#1B2A22]/60 pl-3">

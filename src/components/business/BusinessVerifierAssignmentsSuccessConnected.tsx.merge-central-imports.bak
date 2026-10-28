@@ -1,0 +1,310 @@
+"use client";
+
+import {
+  getVerifierAssignedCampaigns,
+  requireVerifier,
+} from "@/lib/axionveraData";
+
+
+
+import Link from "next/link";
+
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-5 w-5"
+      strokeWidth="2"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m7.5 12 3 3 6-6"
+      />
+    </svg>
+  );
+}
+
+function TeamIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-[18px] w-[18px]"
+      strokeWidth="1.8"
+    >
+      <circle cx="9" cy="8" r="3" />
+      <circle cx="17" cy="10" r="2" />
+
+      <path
+        strokeLinecap="round"
+        d="M4 19c.5-3 2.2-5 5-5s4.5 2 5 5M14.5 15c1.9.1 3.2 1.4 3.5 3"
+      />
+    </svg>
+  );
+}
+
+function MerchantIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="1.8"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 10h16M5 10l1-5h12l1 5M6 10v9h12v-9M9 19v-5h6v5"
+      />
+    </svg>
+  );
+}
+
+function RocketIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="1.8"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M14 5c2-2 4.5-2 5-2 .1 2-.1 4-2 6l-4 4-4-4 5-4Z"
+      />
+
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m9 9-3 1-2 3 5-1M13 13l-1 5 3-2 1-3M8 16l-2 2"
+      />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-[18px] w-[18px]"
+      strokeWidth="1.8"
+    >
+      <circle cx="12" cy="12" r="9" />
+
+      <path
+        strokeLinecap="round"
+        d="M12 11v5M12 8h.01"
+      />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className="h-4 w-4"
+      strokeWidth="1.9"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 12h14m-5-5 5 5-5 5"
+      />
+    </svg>
+  );
+}
+
+const assignmentSuccessVerifier =
+  requireVerifier("operations-team");
+
+const [
+  assignmentSuccessPrimaryCampaign,
+  assignmentSuccessSecondaryCampaign,
+] = (() => {
+  const campaigns =
+    getVerifierAssignedCampaigns(
+      "operations-team"
+    );
+
+  const [primary, secondary] =
+    campaigns;
+
+  if (!primary || !secondary) {
+    throw new Error(
+      "Operations Team requires two assigned campaigns."
+    );
+  }
+
+  return [primary, secondary] as const;
+})();
+
+export function BusinessVerifierAssignmentsSuccessConnected() {
+  return (
+    <div className="mx-auto flex w-full max-w-2xl flex-col pb-16">
+
+      {/* BREADCRUMB */}
+      <nav className="mb-8 flex items-center gap-2 text-xs text-[#718277]">
+        <Link
+          href="/app/business/verifiers"
+          className="transition-colors hover:text-white"
+        >
+          Verifiers
+        </Link>
+
+        <span className="text-[#294034]">
+          /
+        </span>
+
+        <span className="font-medium text-white">{assignmentSuccessVerifier.name}</span>
+      </nav>
+
+      {/* SUCCESS HEADER */}
+      <div className="mb-8 flex flex-col items-center text-center">
+
+        <div className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#142019]">
+
+          <div className="absolute inset-0 rounded-full bg-[#02C763]/10" />
+
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#02C763]/20 text-[#02C763]">
+            <CheckIcon />
+          </div>
+        </div>
+
+        <h2 className="font-display text-2xl font-semibold tracking-tight text-white">
+          Assignments updated
+        </h2>
+
+        <p className="mt-2 max-w-md text-sm leading-6 text-[#A7B3AB]">
+          {assignmentSuccessVerifier.name}&apos;s campaign assignments
+          have been updated successfully.
+        </p>
+      </div>
+
+      {/* SUMMARY */}
+      <section className="flex flex-col gap-6 rounded-2xl border border-[#1B2A22] bg-[#0C120F] p-6">
+
+        {/* VERIFIER */}
+        <div className="flex items-center justify-between gap-4 rounded-[10px] bg-[#142019] p-4">
+
+          <div className="flex items-center gap-3">
+
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#1D2A22] text-[#02C763]">
+              <TeamIcon />
+            </div>
+
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#A7B3AB]">
+                Verifier
+              </span>
+
+              <p className="mt-0.5 font-display text-base font-semibold text-white">{assignmentSuccessVerifier.name}</p>
+            </div>
+          </div>
+
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs font-medium text-[#02C763]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignmentSuccessVerifier.status === "authorised"
+              ? "Authorised"
+              : "Inactive"}</span>
+        </div>
+
+        {/* CAMPAIGNS */}
+        <div>
+
+          <div className="mb-3 flex items-center justify-between px-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#A7B3AB]">
+              Assigned campaigns
+            </span>
+
+            <span className="rounded-full bg-[#142019] px-2 py-0.5 text-xs font-semibold text-white">
+              2 active
+            </span>
+          </div>
+
+          <div className="space-y-2">
+
+            <div className="flex items-center justify-between gap-4 rounded-[10px] bg-[#142019] p-3.5">
+
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="shrink-0 text-[#A7B3AB]">
+                  <MerchantIcon />
+                </span>
+
+                <span className="truncate text-sm font-medium text-white">{assignmentSuccessPrimaryCampaign.name}</span>
+              </div>
+
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs text-[#02C763]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignmentSuccessPrimaryCampaign.status === "paused"
+                  ? "Paused"
+                  : "Active"}</span>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 rounded-[10px] bg-[#142019] p-3.5">
+
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="shrink-0 text-[#A7B3AB]">
+                  <RocketIcon />
+                </span>
+
+                <span className="truncate text-sm font-medium text-white">{assignmentSuccessSecondaryCampaign.name}</span>
+              </div>
+
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs text-[#02C763]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignmentSuccessSecondaryCampaign.status === "paused"
+                  ? "Paused"
+                  : "Active"}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* INFO */}
+        <div className="flex items-start gap-3 rounded-[10px] bg-[#101813] p-3.5">
+
+          <span className="mt-0.5 shrink-0 text-[#718277]">
+            <InfoIcon />
+          </span>
+
+          <p className="text-sm leading-6 text-[#A7B3AB]">
+            {assignmentSuccessVerifier.name} can verify qualifying
+            activity for these assigned campaigns.
+          </p>
+        </div>
+      </section>
+
+      {/* ACTIONS */}
+      <div className="mt-6 flex items-center justify-end gap-3">
+
+        <Link
+          href="/app/business/verifiers"
+          className="rounded-[10px] bg-[#101813] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#142019]"
+        >
+          Back to Verifiers
+        </Link>
+
+        <Link
+          href="/app/business/verifiers/operations-team"
+          className="inline-flex items-center gap-2 rounded-[10px] bg-[#02C763] px-6 py-2.5 text-sm font-semibold text-[#050806] transition-colors hover:bg-[#02D86F]"
+        >
+          View verifier
+          <ArrowRight />
+        </Link>
+      </div>
+
+      <p className="mt-5 text-center text-[10px] text-[#515B54]">
+        Assignment changes are currently represented in
+        the UI only.
+      </p>
+    </div>
+  );
+}

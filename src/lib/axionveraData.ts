@@ -478,6 +478,15 @@ export const rewardEntries: RewardEntry[] = [
     timeLabel: "3h ago",
   },
   {
+    id: "reward-005",
+    agentId: "amina-t",
+    campaignId: "merchant-growth",
+    activity: "Merchant onboarded",
+    amount: 5,
+    status: "claimed",
+    timeLabel: "Yesterday",
+  },
+  {
     id: "reward-003",
     agentId: "amina-t",
     campaignId: "merchant-growth",
@@ -494,15 +503,6 @@ export const rewardEntries: RewardEntry[] = [
     amount: 5,
     status: "claimable",
     timeLabel: "4 days ago",
-  },
-  {
-    id: "reward-005",
-    agentId: "amina-t",
-    campaignId: "merchant-growth",
-    activity: "Merchant onboarded",
-    amount: 5,
-    status: "claimed",
-    timeLabel: "Yesterday",
   },
   {
     id: "reward-006",
@@ -884,4 +884,86 @@ export const businessVerifierDirectory: Array<{
     verified: 8,
   },
 ];
+
+/**
+ * Merchant Growth funding-flow preview.
+ *
+ * This is a historical UI transaction snapshot, not
+ * mutable Core state.
+ */
+const merchantGrowthFundingCampaign =
+  requireCampaign("merchant-growth");
+
+export const merchantGrowthFundingPreview = {
+  campaignId:
+    merchantGrowthFundingCampaign.id,
+  campaignName:
+    merchantGrowthFundingCampaign.name,
+  campaignSlug:
+    merchantGrowthFundingCampaign.slug,
+  campaignStatus:
+    merchantGrowthFundingCampaign.status,
+  previousFunds: 0,
+  amount:
+    merchantGrowthFundingCampaign.fundedAmount,
+  postFundingFunds:
+    merchantGrowthFundingCampaign.fundedAmount,
+} as const;
+
+/**
+ * Recent activity snapshot shown on the Merchant Growth
+ * campaign detail page.
+ *
+ * Historical reward values remain snapshots and are not
+ * recomputed from current campaign rules.
+ */
+const merchantGrowthCampaignActivitySnapshots: Array<{
+  agentId: Agent["id"];
+  action: string;
+  status: "Verified" | "Pending verification";
+  rewardAmount: number | null;
+  time: string;
+}> = [
+  {
+    agentId: "sarah-a",
+    action: "Merchant onboarded",
+    status: "Verified",
+    rewardAmount: 5,
+    time: "15m ago",
+  },
+  {
+    agentId: "david-k",
+    action: "Merchant onboarded",
+    status: "Verified",
+    rewardAmount: 5,
+    time: "1h ago",
+  },
+  {
+    agentId: "amina-t",
+    action: "Merchant onboarded",
+    status: "Pending verification",
+    rewardAmount: null,
+    time: "3h ago",
+  },
+];
+
+export const merchantGrowthCampaignRecentActivity =
+  merchantGrowthCampaignActivitySnapshots.map(
+    (snapshot) => {
+      const agent =
+        requireAgent(snapshot.agentId);
+
+      return {
+        initials: agent.initials,
+        name: agent.name,
+        action: snapshot.action,
+        status: snapshot.status,
+        reward:
+          snapshot.rewardAmount == null
+            ? null
+            : `+${snapshot.rewardAmount} ${CURRENCY}`,
+        time: snapshot.time,
+      };
+    }
+  );
 

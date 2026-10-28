@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  CURRENCY,
+  merchantGrowthFundingPreview,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
 
 type FundingStage =
@@ -10,6 +15,19 @@ type FundingStage =
 type BusinessCampaignFundingStatusProps = {
   stage: FundingStage;
 };
+
+
+const fundingPreview =
+  merchantGrowthFundingPreview;
+
+const fundingCampaignHref =
+  `/app/business/campaigns/${fundingPreview.campaignSlug}`;
+
+const fundingStatusLabel =
+  fundingPreview.campaignStatus === "active"
+    ? "Active"
+    : "Paused";
+
 
 function WalletIcon() {
   return (
@@ -90,15 +108,11 @@ function FundingSummary({
             Campaign
           </span>
 
-          <span className="mt-0.5 truncate text-sm font-semibold text-white">
-            Merchant Growth Campaign
-          </span>
+          <span className="mt-0.5 truncate text-sm font-semibold text-white">{fundingPreview.campaignName}</span>
         </div>
 
         <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#02C763]/25 bg-[#02C763]/10 px-2.5 py-0.5 text-xs font-medium text-[#02C763]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-          Active
-        </span>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{fundingStatusLabel}</span>
       </div>
 
       <div className="space-y-2.5 pt-4">
@@ -109,9 +123,7 @@ function FundingSummary({
               : "Funding amount"}
           </span>
 
-          <span className="font-mono font-semibold text-white">
-            1,000 USDC
-          </span>
+          <span className="font-mono font-semibold text-white">{`${fundingPreview.amount.toLocaleString()} ${CURRENCY}`}</span>
         </div>
 
         <div className="flex items-center justify-between gap-4 text-sm">
@@ -121,9 +133,7 @@ function FundingSummary({
               : "Current campaign funds"}
           </span>
 
-          <span className="font-mono font-medium text-[#A7B3AB]">
-            0 USDC
-          </span>
+          <span className="font-mono font-medium text-[#A7B3AB]">{`${fundingPreview.previousFunds.toLocaleString()} ${CURRENCY}`}</span>
         </div>
 
         {!error && (
@@ -132,9 +142,7 @@ function FundingSummary({
               Campaign funds after funding
             </span>
 
-            <span className="font-mono font-semibold text-[#02C763]">
-              1,000 USDC
-            </span>
+            <span className="font-mono font-semibold text-[#02C763]">{`${fundingPreview.amount.toLocaleString()} ${CURRENCY}`}</span>
           </div>
         )}
       </div>
@@ -155,11 +163,9 @@ function Breadcrumb() {
       <span className="text-[#294034]">/</span>
 
       <Link
-        href="/app/business/campaigns/merchant-growth-campaign"
+        href={fundingCampaignHref}
         className="transition-colors hover:text-white"
-      >
-        Merchant Growth Campaign
-      </Link>
+      >{fundingPreview.campaignName}</Link>
 
       <span className="text-[#294034]">/</span>
 
@@ -196,7 +202,9 @@ export function BusinessCampaignFundingStatus({
                 </h2>
 
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#8A938D]">
-                  Approve the 1,000 USDC funding
+                  Approve the{" "}
+                  {fundingPreview.amount.toLocaleString()}{" "}
+                  {CURRENCY} funding
                   transaction in your connected wallet.
                 </p>
               </div>
@@ -347,7 +355,7 @@ export function BusinessCampaignFundingStatus({
                 </Link>
 
                 <Link
-                  href="/app/business/campaigns/merchant-growth-campaign"
+                  href={fundingCampaignHref}
                   className="w-full rounded-[10px] border border-[#1B2A22] bg-[#0C120F] px-6 py-2.5 text-center text-sm font-medium text-white transition-colors hover:border-[#294034] hover:bg-[#142019] sm:w-auto"
                 >
                   Back to campaign

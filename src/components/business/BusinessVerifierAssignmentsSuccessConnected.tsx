@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  getVerifierAssignedCampaigns,
+  requireVerifier,
+} from "@/lib/axionveraData";
+
+
+
+
+
 import Link from "next/link";
 
 function CheckIcon() {
@@ -119,6 +128,30 @@ function ArrowRight() {
   );
 }
 
+const assignmentSuccessVerifier =
+  requireVerifier("operations-team");
+
+const [
+  assignmentSuccessPrimaryCampaign,
+  assignmentSuccessSecondaryCampaign,
+] = (() => {
+  const campaigns =
+    getVerifierAssignedCampaigns(
+      "operations-team"
+    );
+
+  const [primary, secondary] =
+    campaigns;
+
+  if (!primary || !secondary) {
+    throw new Error(
+      "Operations Team requires two assigned campaigns."
+    );
+  }
+
+  return [primary, secondary] as const;
+})();
+
 export function BusinessVerifierAssignmentsSuccessConnected() {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col pb-16">
@@ -136,9 +169,7 @@ export function BusinessVerifierAssignmentsSuccessConnected() {
           /
         </span>
 
-        <span className="font-medium text-white">
-          Operations Team
-        </span>
+        <span className="font-medium text-white">{assignmentSuccessVerifier.name}</span>
       </nav>
 
       {/* SUCCESS HEADER */}
@@ -158,7 +189,7 @@ export function BusinessVerifierAssignmentsSuccessConnected() {
         </h2>
 
         <p className="mt-2 max-w-md text-sm leading-6 text-[#A7B3AB]">
-          Operations Team&apos;s campaign assignments
+          {assignmentSuccessVerifier.name}&apos;s campaign assignments
           have been updated successfully.
         </p>
       </div>
@@ -180,16 +211,14 @@ export function BusinessVerifierAssignmentsSuccessConnected() {
                 Verifier
               </span>
 
-              <p className="mt-0.5 font-display text-base font-semibold text-white">
-                Operations Team
-              </p>
+              <p className="mt-0.5 font-display text-base font-semibold text-white">{assignmentSuccessVerifier.name}</p>
             </div>
           </div>
 
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs font-medium text-[#02C763]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-            Authorised
-          </span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignmentSuccessVerifier.status === "authorised"
+              ? "Authorised"
+              : "Inactive"}</span>
         </div>
 
         {/* CAMPAIGNS */}
@@ -214,15 +243,13 @@ export function BusinessVerifierAssignmentsSuccessConnected() {
                   <MerchantIcon />
                 </span>
 
-                <span className="truncate text-sm font-medium text-white">
-                  Merchant Growth Campaign
-                </span>
+                <span className="truncate text-sm font-medium text-white">{assignmentSuccessPrimaryCampaign.name}</span>
               </div>
 
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs text-[#02C763]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-                Active
-              </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignmentSuccessPrimaryCampaign.status === "paused"
+                  ? "Paused"
+                  : "Active"}</span>
             </div>
 
             <div className="flex items-center justify-between gap-4 rounded-[10px] bg-[#142019] p-3.5">
@@ -232,15 +259,13 @@ export function BusinessVerifierAssignmentsSuccessConnected() {
                   <RocketIcon />
                 </span>
 
-                <span className="truncate text-sm font-medium text-white">
-                  Customer Activation Campaign
-                </span>
+                <span className="truncate text-sm font-medium text-white">{assignmentSuccessSecondaryCampaign.name}</span>
               </div>
 
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#02C763]/10 px-2.5 py-1 text-xs text-[#02C763]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-                Active
-              </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignmentSuccessSecondaryCampaign.status === "paused"
+                  ? "Paused"
+                  : "Active"}</span>
             </div>
           </div>
         </div>
@@ -253,7 +278,7 @@ export function BusinessVerifierAssignmentsSuccessConnected() {
           </span>
 
           <p className="text-sm leading-6 text-[#A7B3AB]">
-            Operations Team can verify qualifying
+            {assignmentSuccessVerifier.name} can verify qualifying
             activity for these assigned campaigns.
           </p>
         </div>

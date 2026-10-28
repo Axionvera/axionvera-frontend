@@ -1,11 +1,19 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
 import {
-  requireVerifier,
+  useState } from "react";
+import {
+  businessActivities,
   getVerifierAssignedCampaigns,
+  requireAgent,
+  requireCampaign,
+  requireVerifier,
 } from "@/lib/axionveraData";
+
+
+
+import Link from "next/link";
+
 
 function ShieldIcon() {
   return (
@@ -147,32 +155,54 @@ const assignedCampaigns =
     "operations-team"
   );
 
-const activity = [
-  {
-    initials: "SA",
-    name: "Sarah A.",
-    action: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    status: "Verified",
-    time: "15m ago",
-  },
-  {
-    initials: "DK",
-    name: "David K.",
-    action: "Customer activated",
-    campaign: "Customer Activation Campaign",
-    status: "Verified",
-    time: "1h ago",
-  },
-  {
-    initials: "AT",
-    name: "Amina T.",
-    action: "Merchant onboarded",
-    campaign: "Merchant Growth Campaign",
-    status: "Pending verification",
-    time: "3h ago",
-  },
-];
+const [
+  primaryAssignedCampaign,
+  secondaryAssignedCampaign,
+] = (() => {
+  const [primary, secondary] =
+    assignedCampaigns;
+
+  if (!primary || !secondary) {
+    throw new Error(
+      "Operations Team requires two assigned campaigns."
+    );
+  }
+
+  return [primary, secondary] as const;
+})();
+
+const verifierAssignedCampaignIds =
+  new Set(
+    operationsTeamVerifier.assignedCampaignIds
+  );
+
+const activity =
+  businessActivities
+    .filter((item) =>
+      verifierAssignedCampaignIds.has(
+        item.campaignId
+      )
+    )
+    .slice(0, 3)
+    .map((item) => {
+      const agent =
+        requireAgent(item.agentId);
+
+      const campaign =
+        requireCampaign(item.campaignId);
+
+      return {
+        initials: agent.initials,
+        name: agent.name,
+        action: item.activity,
+        campaign: campaign.name,
+        status:
+          item.status === "verified"
+            ? "Verified"
+            : "Pending verification",
+        time: item.submittedLabel,
+      };
+    });
 
 export function BusinessVerifierDetailConnected() {
   const [assignmentNote, setAssignmentNote] =
@@ -342,17 +372,16 @@ export function BusinessVerifierDetailConnected() {
           </div>
 
           <Link
-            href="/app/business/campaigns/merchant-growth-campaign"
+            href={`/app/business/campaigns/${primaryAssignedCampaign.slug}`}
             className="group rounded-xl border border-[#1B2A22] bg-[#0C120F] p-5 transition-all hover:border-[#294034] hover:bg-[#142019]"
           >
             <div className="mb-3 flex items-start justify-between gap-3">
-              <h4 className="truncate text-sm font-semibold text-white transition-colors group-hover:text-[#02C763]">{assignedCampaigns[0]?.name ??
-      "Merchant Growth Campaign"}</h4>
+              <h4 className="truncate text-sm font-semibold text-white transition-colors group-hover:text-[#02C763]">{primaryAssignedCampaign.name}</h4>
 
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#16281E] px-2 py-0.5 text-xs font-medium text-[#02C763]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignedCampaigns[0]?.status === "paused"
-      ? "Paused"
-      : "Active"}</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{primaryAssignedCampaign.status === "paused"
+                  ? "Paused"
+                  : "Active"}</span>
             </div>
 
             <div className="flex items-center justify-between gap-3 pt-2 text-xs text-[#A7B3AB]">
@@ -382,13 +411,12 @@ export function BusinessVerifierDetailConnected() {
 
           <div className="rounded-xl border border-[#1B2A22] bg-[#0C120F] p-5">
             <div className="mb-3 flex items-start justify-between gap-3">
-              <h4 className="truncate text-sm font-semibold text-white">{assignedCampaigns[1]?.name ??
-      "Customer Activation Campaign"}</h4>
+              <h4 className="truncate text-sm font-semibold text-white">{secondaryAssignedCampaign.name}</h4>
 
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#16281E] px-2 py-0.5 text-xs font-medium text-[#02C763]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{assignedCampaigns[1]?.status === "paused"
-      ? "Paused"
-      : "Active"}</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{secondaryAssignedCampaign.status === "paused"
+                  ? "Paused"
+                  : "Active"}</span>
             </div>
 
             <div className="flex items-center justify-between gap-3 pt-2 text-xs text-[#A7B3AB]">

@@ -1,6 +1,24 @@
 "use client";
 
+import {
+  CURRENCY,
+  merchantGrowthFundingPreview,
+} from "@/lib/axionveraData";
+
 import Link from "next/link";
+
+
+const fundingPreview =
+  merchantGrowthFundingPreview;
+
+const fundingCampaignHref =
+  `/app/business/campaigns/${fundingPreview.campaignSlug}`;
+
+const fundingStatusLabel =
+  fundingPreview.campaignStatus === "active"
+    ? "Active"
+    : "Paused";
+
 
 function CheckIcon() {
   return (
@@ -154,8 +172,9 @@ export function BusinessCampaignFundingSuccess() {
         </h2>
 
         <p className="max-w-md text-sm leading-relaxed text-[#9DA8A1]">
-          1,000 USDC has been added to Merchant Growth
-          Campaign. The campaign now has funds available
+          {fundingPreview.amount.toLocaleString()}{" "}
+            {CURRENCY} has been added to{" "}
+            {fundingPreview.campaignName}. The campaign now has funds available
           for verified reward allocation.
         </p>
       </div>
@@ -168,15 +187,11 @@ export function BusinessCampaignFundingSuccess() {
               <CampaignIcon />
             </div>
 
-            <h3 className="truncate font-display text-[17px] font-semibold text-white">
-              Merchant Growth Campaign
-            </h3>
+            <h3 className="truncate font-display text-[17px] font-semibold text-white">{fundingPreview.campaignName}</h3>
           </div>
 
           <div className="ml-3 inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#02C763]/30 bg-[#02C763]/10 px-2.5 py-0.5 text-xs font-medium text-[#02C763]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-            Active
-          </div>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />{fundingStatusLabel}</div>
         </div>
 
         <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
@@ -192,9 +207,7 @@ export function BusinessCampaignFundingSuccess() {
                 <FundsIcon />
               </span>
 
-              <span className="font-mono text-sm font-semibold text-white">
-                1,000 USDC
-              </span>
+              <span className="font-mono text-sm font-semibold text-white">{`${fundingPreview.postFundingFunds.toLocaleString()} ${CURRENCY}`}</span>
             </div>
           </div>
 
@@ -207,9 +220,7 @@ export function BusinessCampaignFundingSuccess() {
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-[#02C763]" />
 
-              <span className="font-mono text-sm font-semibold text-[#02C763]">
-                1,000 USDC
-              </span>
+              <span className="font-mono text-sm font-semibold text-[#02C763]">{`${fundingPreview.postFundingFunds.toLocaleString()} ${CURRENCY}`}</span>
             </div>
           </div>
 
@@ -219,9 +230,7 @@ export function BusinessCampaignFundingSuccess() {
               Previous campaign funds
             </span>
 
-            <span className="font-mono text-sm font-medium text-[#A7B3AB]">
-              0 USDC
-            </span>
+            <span className="font-mono text-sm font-medium text-[#A7B3AB]">{`${fundingPreview.previousFunds.toLocaleString()} ${CURRENCY}`}</span>
           </div>
 
           {/* REWARD */}
@@ -263,7 +272,7 @@ export function BusinessCampaignFundingSuccess() {
       {/* ACTIONS */}
       <div className="flex w-full flex-col items-center gap-3">
         <Link
-          href="/app/business/campaigns/merchant-growth-campaign"
+          href={fundingCampaignHref}
           className="inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#02C763] px-5 py-3 text-sm font-semibold text-[#050806] shadow-sm transition-all duration-150 hover:-translate-y-px hover:bg-[#02D86F]"
         >
           View Campaign
