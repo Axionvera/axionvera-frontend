@@ -294,7 +294,7 @@ export function AgentDashboardClient() {
               <span className="h-2 w-2 rounded-full bg-[#02C763]" />
 
               <span className="font-mono text-[#E1E3DF]">
-                GBXE7...AELC
+                {dashboardAgent.walletAddressShort}
               </span>
             </button>
           </div>

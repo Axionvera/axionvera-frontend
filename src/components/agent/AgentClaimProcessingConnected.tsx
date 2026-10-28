@@ -140,7 +140,7 @@ export function AgentClaimProcessingConnected() {
             </span>
 
             <span className="text-sm font-semibold text-[#02C763]">
-              20 USDC
+              {claimAmount} {CURRENCY}
             </span>
           </div>
 
@@ -150,7 +150,7 @@ export function AgentClaimProcessingConnected() {
             </span>
 
             <span className="text-sm font-medium text-white">
-              20 USDC
+              {summary.claimable} {CURRENCY}
             </span>
           </div>
 
@@ -160,7 +160,11 @@ export function AgentClaimProcessingConnected() {
             </span>
 
             <span className="text-sm font-medium text-[#718277]">
-              0 USDC
+              {Math.max(
+                0,
+                summary.claimable - claimAmount
+              )}{" "}
+              {CURRENCY}
             </span>
           </div>
         </div>

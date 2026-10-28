@@ -342,11 +342,11 @@ export function AgentActivityConnected() {
             </option>
 
             <option value="merchant">
-              Merchant Growth Campaign
+              {requireCampaign("merchant-growth").name}
             </option>
 
             <option value="referral">
-              Referral Growth Campaign
+              {requireCampaign("referral-growth").name}
             </option>
           </select>
 

@@ -351,7 +351,7 @@ export function AgentOverviewConnected() {
 
               <div className="mt-2 flex items-baseline gap-1.5">
                 <span className="font-display text-3xl font-bold text-white">
-                  20
+                  {summary.claimable}
                 </span>
 
                 <span className="text-sm font-semibold text-[#02C763]">
@@ -367,7 +367,7 @@ export function AgentOverviewConnected() {
                 </span>
 
                 <p className="mt-2 text-sm font-semibold text-white">
-                  25 USDC
+                  {summary.claimed} {CURRENCY}
                 </p>
               </div>
 
@@ -377,7 +377,7 @@ export function AgentOverviewConnected() {
                 </span>
 
                 <p className="mt-2 text-sm font-semibold text-white">
-                  45 USDC
+                  {summary.totalEarned} {CURRENCY}
                 </p>
               </div>
             </div>
