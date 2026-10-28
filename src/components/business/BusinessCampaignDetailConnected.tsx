@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { useCampaignCore } from "@/hooks/useCampaignCore";
 
 import {
   CURRENCY,
@@ -116,10 +117,14 @@ export function BusinessCampaignDetailConnected() {
   const [pauseCampaignOpen, setPauseCampaignOpen] =
     useState(false);
 
-  const [campaignPaused, setCampaignPaused] =
-    useState(
-      campaign.status === "paused"
-    );
+  const {
+    status: campaignStatus,
+    pause: pauseCampaign,
+    resume: resumeCampaign,
+  } = useCampaignCore(campaign.id);
+
+  const campaignPaused =
+    campaignStatus === "paused";
 
   const [resumeCampaignOpen, setResumeCampaignOpen] =
     useState(false);
@@ -770,7 +775,7 @@ export function BusinessCampaignDetailConnected() {
               <button
                 type="button"
                 onClick={() => {
-                  setCampaignPaused(true);
+                  pauseCampaign();
                   setPauseCampaignOpen(false);
                 }}
                 className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-neutral-950 shadow-sm transition-colors hover:bg-amber-400"
@@ -901,7 +906,7 @@ export function BusinessCampaignDetailConnected() {
               <button
                 type="button"
                 onClick={() => {
-                  setCampaignPaused(false);
+                  resumeCampaign();
                   setResumeCampaignOpen(false);
                 }}
                 className="rounded-lg bg-[#02C763] px-4 py-2.5 text-sm font-semibold text-[#031009] shadow-sm transition-colors hover:bg-[#02D86F]"
