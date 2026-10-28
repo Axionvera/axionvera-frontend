@@ -3,6 +3,25 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import type {
+  CampaignCreationPlan,
+} from "@/core/campaigns/campaignCreateInput";
+
+import {
+  buildCampaignCreationPlan,
+} from "@/core/campaigns/campaignCreateInput";
+
+import {
+  createConfiguredCampaignOnProtocol,
+} from "@/core/campaigns/campaignCreationService";
+
+import {
+  createAxionveraWalletConnector,
+} from "@/lib/axionveraWallet";
+
+import {
+  useBusinessWallet,
+} from "@/components/business/BusinessWalletProvider";
 
 import {
   BusinessCampaignCreated,
@@ -21,7 +40,30 @@ const steps = [
 ] as const;
 
 export function BusinessCreateCampaign() {
-  const [created, setCreated] = useState(false);
+  const {
+    address: walletAddress,
+  } = useBusinessWallet();
+
+  const [created, setCreated] =
+    useState(false);
+
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
+  const [
+    protocolCampaignId,
+    setProtocolCampaignId,
+  ] = useState<string | null>(
+    null
+  );
+
+  const [
+    creationPlan,
+    setCreationPlan,
+  ] =
+    useState<CampaignCreationPlan | null>(
+      null
+    );
 
   const [step, setStep] = useState<Step>(1);
 
@@ -58,6 +100,20 @@ export function BusinessCreateCampaign() {
     useState("");
 
   function goToStep(target: Step) {
+    if (isSubmitting) {
+      return;
+    }
+
+    if (
+      protocolCampaignId &&
+      target !== 4
+    ) {
+      setSubmissionNote(
+        `Campaign #${protocolCampaignId} already exists on-chain. Complete its remaining setup before editing the form.`
+      );
+      return;
+    }
+
     setSubmissionNote("");
     setStep(target);
   }
@@ -98,15 +154,102 @@ export function BusinessCreateCampaign() {
     goToStep(3);
   }
 
-  function handleCreateCampaign() {
-    /*
-      Do not fake a successful on-chain write.
+  async function handleCreateCampaign() {
+    if (isSubmitting) {
+      return;
+    }
 
-      The actual create_campaign transaction will
-      be wired to the Axionvera SDK + connected wallet
-      in the next integration step.
-    */
-    setCreated(true);
+    if (!walletAddress) {
+      setSubmissionNote(
+        "Connect your business Stellar wallet before creating this campaign."
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    setSubmissionNote(
+      "Creating the campaign on Stellar. Your wallet may request up to three approvals: campaign creation, reward rule setup, and verifier authorisation."
+    );
+
+    try {
+      const plan =
+        protocolCampaignId &&
+        creationPlan
+          ? creationPlan
+          : buildCampaignCreationPlan({
+              adminAddress:
+                walletAddress,
+              name,
+              qualifyingAction:
+                action,
+              reward,
+              startDate,
+              endDate,
+              verifier,
+            });
+
+      const wallet =
+        createAxionveraWalletConnector(
+          walletAddress
+        );
+
+      const result =
+        await createConfiguredCampaignOnProtocol(
+          {
+            sourcePublicKey:
+              walletAddress,
+
+            wallet,
+
+            plan,
+
+            ...(protocolCampaignId
+              ? {
+                  existingCampaignId:
+                    protocolCampaignId,
+                }
+              : {}),
+
+            onCampaignCreated:
+              (campaignId) => {
+                const value =
+                  campaignId.toString();
+
+                setProtocolCampaignId(
+                  value
+                );
+
+                setCreationPlan(
+                  plan
+                );
+
+                setSubmissionNote(
+                  `Campaign #${value} was created on-chain. Completing its reward rule and verifier configuration.`
+                );
+              },
+          }
+        );
+
+      setProtocolCampaignId(
+        result.campaignId.toString()
+      );
+
+      setCreationPlan(plan);
+
+      setSubmissionNote("");
+
+      setCreated(true);
+    } catch (cause) {
+      const message =
+        cause instanceof Error
+          ? cause.message
+          : "Campaign creation could not be completed.";
+
+      setSubmissionNote(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (created) {
@@ -722,9 +865,14 @@ export function BusinessCreateCampaign() {
                 onClick={
                   handleCreateCampaign
                 }
-                className="rounded-lg bg-[#02C763] px-7 py-2.5 text-sm font-semibold text-[#0A140E] transition-all hover:bg-[#02D86F]"
+                disabled={
+                  isSubmitting
+                }
+                className="rounded-lg bg-[#02C763] px-7 py-2.5 text-sm font-semibold text-[#0A140E] transition-all hover:bg-[#02D86F] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Create Campaign
+                {isSubmitting
+                  ? "Creating on Stellar..."
+                  : "Create Campaign"}
               </button>
             </div>
           </section>

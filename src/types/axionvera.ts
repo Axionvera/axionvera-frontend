@@ -1,6 +1,7 @@
 export type CampaignStatus =
   | "active"
-  | "paused";
+  | "paused"
+  | "closed";
 
 export type ActivityStatus =
   | "verified"
