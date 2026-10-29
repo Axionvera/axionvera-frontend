@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useCampaignCore } from "@/hooks/useCampaignCore";
+
+import {
+  createTestnetUsdcTrustline,
+} from "@/core/usdcTrustline";
+
+import {
+  useBusinessWallet,
+} from "@/components/business/BusinessWalletProvider";
+import { useCampaignProtocol } from "@/hooks/useCampaignProtocol";
 
 import {
   CURRENCY,
@@ -107,6 +115,37 @@ if (!merchantGrowthCampaign) {
 export function BusinessCampaignDetailConnected() {
   const campaign = merchantGrowthCampaign;
 
+  const {
+    address: businessWalletAddress,
+  } = useBusinessWallet();
+
+  useEffect(() => {
+    if (
+      process.env.NODE_ENV !==
+        "development" ||
+      !businessWalletAddress
+    ) {
+      return;
+    }
+
+    const target =
+      window as typeof window & {
+        axionveraCreateUsdcTrustline?: () =>
+          Promise<unknown>;
+      };
+
+    target.axionveraCreateUsdcTrustline =
+      () =>
+        createTestnetUsdcTrustline(
+          businessWalletAddress
+        );
+
+    return () => {
+      delete target
+        .axionveraCreateUsdcTrustline;
+    };
+  }, [businessWalletAddress]);
+
   const campaignVerifier =
     campaign.verifierId
       ? requireVerifier(campaign.verifierId)
@@ -119,12 +158,33 @@ export function BusinessCampaignDetailConnected() {
 
   const {
     status: campaignStatus,
+    fundedAmount,
+    allocatedAmount,
+    availableFunds,
+    allocationPercent,
+    isLoading: campaignProtocolLoading,
+    isMutating: campaignProtocolMutating,
+    error: campaignProtocolError,
     pause: pauseCampaign,
     resume: resumeCampaign,
-  } = useCampaignCore(campaign.id);
+  } = useCampaignProtocol(
+    campaign.id
+  );
 
   const campaignPaused =
     campaignStatus === "paused";
+
+  const campaignClosed =
+    campaignStatus === "closed";
+
+  const campaignStatusLabel =
+    campaignProtocolLoading
+      ? "Loading..."
+      : campaignClosed
+        ? "Closed"
+        : campaignPaused
+          ? "Paused"
+          : "Active";
 
   const [resumeCampaignOpen, setResumeCampaignOpen] =
     useState(false);
@@ -299,11 +359,18 @@ export function BusinessCampaignDetailConnected() {
 
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[#02C763]/25 bg-[#02C763]/10 px-2.5 py-0.5 text-xs font-medium text-[#02C763]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
-            {campaignPaused ? "Paused" : "Active"}
+            {campaignStatusLabel}
           </span>
           </div>
 
           <p className="mt-2 text-sm text-[#718277]">{campaign.description}</p>
+
+        {campaignProtocolError && (
+          <div className="mt-3 max-w-2xl rounded-xl border border-[#F25F5C]/25 bg-[#F25F5C]/10 px-3.5 py-3 text-xs leading-5 text-[#F2B8B6]">
+            Live campaign data could not be synchronised:{" "}
+            {campaignProtocolError}
+          </div>
+        )}
 
         {campaignPaused && (
           <div className="mt-3 flex max-w-2xl items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3.5 py-3">
@@ -354,7 +421,13 @@ export function BusinessCampaignDetailConnected() {
               aria-label="Campaign options"
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((value) => !value)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#1B2A22] bg-[#101813] text-[#9DA8A1] transition-colors hover:bg-[#16281E] hover:text-white"
+              disabled={
+                campaignProtocolLoading ||
+                campaignProtocolMutating ||
+                Boolean(campaignProtocolError) ||
+                campaignClosed
+              }
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#1B2A22] bg-[#101813] text-[#9DA8A1] transition-colors hover:bg-[#16281E] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <MoreIcon />
             </button>
@@ -399,17 +472,17 @@ export function BusinessCampaignDetailConnected() {
         {[
           [
             "Campaign funds",
-            `${campaign.fundedAmount.toLocaleString()} ${CURRENCY}`,
+            `${fundedAmount} ${CURRENCY}`,
             false,
           ],
           [
             "Allocated rewards",
-            `${campaign.allocatedRewards.toLocaleString()} ${CURRENCY}`,
+            `${allocatedAmount} ${CURRENCY}`,
             false,
           ],
           [
             "Available funds",
-            `${campaign.availableFunds.toLocaleString()} ${CURRENCY}`,
+            `${availableFunds} ${CURRENCY}`,
             true,
           ],
           [
@@ -470,7 +543,7 @@ export function BusinessCampaignDetailConnected() {
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-[#02C763]" />
               <span className="text-sm font-medium text-white">
-            {campaignPaused ? "Paused" : "Active"}
+            {campaignStatusLabel}
           </span>
             </div>
           </div>
@@ -588,7 +661,10 @@ export function BusinessCampaignDetailConnected() {
             <div className="mb-5 h-3 w-full overflow-hidden rounded-full bg-[#1B2A22]">
               <div
                 className="h-full rounded-full bg-[#02C763]"
-                style={{ width: "32.5%" }}
+                style={{
+                  width:
+                    `${allocationPercent}%`,
+                }}
               />
             </div>
 
@@ -597,7 +673,7 @@ export function BusinessCampaignDetailConnected() {
                 <span className="mb-1 block text-xs font-medium text-[#718277]">
                   Funded
                 </span>
-                <span className="text-sm font-semibold text-white">{`${campaign.fundedAmount.toLocaleString()} ${CURRENCY}`}</span>
+                <span className="text-sm font-semibold text-white">{`${fundedAmount} ${CURRENCY}`}</span>
               </div>
 
               <div className="border-l border-[#1B2A22]/60 pl-3">
@@ -605,7 +681,7 @@ export function BusinessCampaignDetailConnected() {
                   <span className="h-1.5 w-1.5 rounded-full bg-[#02C763]" />
                   Allocated
                 </span>
-                <span className="text-sm font-semibold text-[#02C763]">{`${campaign.allocatedRewards.toLocaleString()} ${CURRENCY}`}</span>
+                <span className="text-sm font-semibold text-[#02C763]">{`${allocatedAmount} ${CURRENCY}`}</span>
               </div>
 
               <div className="border-l border-[#1B2A22]/60 pl-3">
@@ -613,7 +689,7 @@ export function BusinessCampaignDetailConnected() {
                   <span className="h-1.5 w-1.5 rounded-full bg-[#718277]" />
                   Available
                 </span>
-                <span className="text-sm font-semibold text-white">{`${campaign.availableFunds.toLocaleString()} ${CURRENCY}`}</span>
+                <span className="text-sm font-semibold text-white">{`${availableFunds} ${CURRENCY}`}</span>
               </div>
             </div>
 
@@ -756,7 +832,7 @@ export function BusinessCampaignDetailConnected() {
                   Available funds
                 </span>
 
-                <span className="font-semibold text-white">{`${campaign.availableFunds.toLocaleString()} ${CURRENCY}`}</span>
+                <span className="font-semibold text-white">{`${availableFunds} ${CURRENCY}`}</span>
               </div>
             </div>
 
@@ -774,11 +850,21 @@ export function BusinessCampaignDetailConnected() {
 
               <button
                 type="button"
-                onClick={() => {
-                  pauseCampaign();
-                  setPauseCampaignOpen(false);
+                onClick={async () => {
+                  try {
+                    await pauseCampaign();
+
+                    setPauseCampaignOpen(
+                      false
+                    );
+                  } catch {
+                    // Hook exposes the protocol error in the page.
+                  }
                 }}
-                className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-neutral-950 shadow-sm transition-colors hover:bg-amber-400"
+                disabled={
+                  campaignProtocolMutating
+                }
+                className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-neutral-950 shadow-sm transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Pause campaign
               </button>
@@ -887,7 +973,7 @@ export function BusinessCampaignDetailConnected() {
                   Available funds
                 </span>
 
-                <span className="font-semibold text-white">{`${campaign.availableFunds.toLocaleString()} ${CURRENCY}`}</span>
+                <span className="font-semibold text-white">{`${availableFunds} ${CURRENCY}`}</span>
               </div>
             </div>
 
@@ -905,11 +991,21 @@ export function BusinessCampaignDetailConnected() {
 
               <button
                 type="button"
-                onClick={() => {
-                  resumeCampaign();
-                  setResumeCampaignOpen(false);
+                onClick={async () => {
+                  try {
+                    await resumeCampaign();
+
+                    setResumeCampaignOpen(
+                      false
+                    );
+                  } catch {
+                    // Hook exposes the protocol error in the page.
+                  }
                 }}
-                className="rounded-lg bg-[#02C763] px-4 py-2.5 text-sm font-semibold text-[#031009] shadow-sm transition-colors hover:bg-[#02D86F]"
+                disabled={
+                  campaignProtocolMutating
+                }
+                className="rounded-lg bg-[#02C763] px-4 py-2.5 text-sm font-semibold text-[#031009] shadow-sm transition-colors hover:bg-[#02D86F] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Resume campaign
               </button>

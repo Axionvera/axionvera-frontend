@@ -136,3 +136,30 @@ export async function addVerifierOnProtocol(
       )
   );
 }
+
+
+export async function pauseCampaignOnProtocol(
+  context: CampaignWriteContext,
+  campaignId: CampaignIdInput
+): Promise<TransactionActionResult> {
+  return executeCampaignWrite(
+    context,
+    (writer) =>
+      writer.preparePauseCampaign({
+        campaignId,
+      })
+  );
+}
+
+export async function resumeCampaignOnProtocol(
+  context: CampaignWriteContext,
+  campaignId: CampaignIdInput
+): Promise<TransactionActionResult> {
+  return executeCampaignWrite(
+    context,
+    (writer) =>
+      writer.prepareResumeCampaign({
+        campaignId,
+      })
+  );
+}

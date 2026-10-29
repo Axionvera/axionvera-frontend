@@ -139,3 +139,37 @@ export function fromProtocolTokenAmount(
 
   return `${whole}.${fraction}`;
 }
+
+
+/**
+ * Formats a raw token amount for UI display without
+ * converting protocol money through JavaScript floating
+ * point numbers.
+ */
+export function formatProtocolTokenAmount(
+  amount: bigint,
+  decimals =
+    AXIONVERA_NETWORK
+      .rewardToken.decimals
+): string {
+  const normalized =
+    fromProtocolTokenAmount(
+      amount,
+      decimals
+    );
+
+  const [
+    whole,
+    fraction,
+  ] = normalized.split(".");
+
+  const groupedWhole =
+    whole.replace(
+      /\B(?=(\d{3})+(?!\d))/g,
+      ","
+    );
+
+  return fraction
+    ? `${groupedWhole}.${fraction}`
+    : groupedWhole;
+}
